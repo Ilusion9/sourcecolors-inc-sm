@@ -4,22 +4,22 @@
 #define _colors_included
  
 ColorInfo g_Colors[] = {
-	{ "default", 		"\x01" },
-	{ "team", 		"\x03" },
-	{ "darkred", 		"\x02" },
-	{ "green", 		"\x04" },
-	{ "lightgreen", 	"\x05" },
-	{ "lime", 		"\x06" },
-	{ "red", 			"\x07" },
-	{ "grey",			"\x08" },
-	{ "yellow", 		"\x09" },
-	{ "orange", 		"\x10" },
-	{ "bluegrey", 	"\x0A" },
-	{ "blue", 		"\x0B" },
-	{ "darkblue", 	"\x0C" },
-	{ "grey2", 		"\x0D" },
-	{ "orchid", 		"\x0E" },
-	{ "lightred", 	"\x0F" }
+	{ "default",      "\x01" },
+	{ "team",         "\x03" },
+	{ "darkred",      "\x02" },
+	{ "green",        "\x04" },
+	{ "lightgreen",   "\x05" },
+	{ "lime",         "\x06" },
+	{ "red",          "\x07" },
+	{ "grey",         "\x08" },
+	{ "yellow",       "\x09" },
+	{ "orange",       "\x10" },
+	{ "bluegrey",     "\x0A" },
+	{ "blue",         "\x0B" },
+	{ "darkblue",     "\x0C" },
+	{ "grey2",        "\x0D" },
+	{ "orchid",       "\x0E" },
+	{ "lightred",     "\x0F" }
 };
 
 stock void C_SendMessage(int client, const char[] message, int author = 0)
