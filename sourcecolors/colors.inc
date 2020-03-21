@@ -5,8 +5,8 @@
  
 ColorInfo g_Colors[] = {
 	{ "default", 		"\x01" },
-	{ "darkred", 		"\x02" },
 	{ "team", 		"\x03" },
+	{ "darkred", 		"\x02" },
 	{ "green", 		"\x04" },
 	{ "lightgreen", 	"\x05" },
 	{ "lime", 		"\x06" },
@@ -39,7 +39,7 @@ stock void C_SendMessage(int client, const char[] message, int author = 0)
 	if (GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available && GetUserMessageType() == UM_Protobuf)
 	{
 		PbSetInt(buf, "ent_idx", author);
-		PbSetBool(buf, "chat", true);
+		PbSetBool(buf, "chat", false);
 		PbSetString(buf, "msg_name", message);
 		PbAddString(buf, "params", "");
 		PbAddString(buf, "params", "");
