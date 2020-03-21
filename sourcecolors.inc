@@ -1,7 +1,7 @@
-#if defined _newcolors_included
+#if defined _sourcecolors_included
     #endinput
 #endif
-#define _newcolors_included
+#define _sourcecolors_included
 
 #include <regex>
 
@@ -13,8 +13,8 @@ enum struct ColorInfo
 	char colorHex[64];
 }
 
-#include <newcolors/morecolors>
-#include <newcolors/colors>
+#include <sourcecolors/morecolors>
+#include <sourcecolors/colors>
 
 stock void CPrintToChat(int client, const char[] message, any ...)
 {
@@ -43,7 +43,7 @@ stock void CPrintToChat(int client, const char[] message, any ...)
 	else
 	{
 		C_Format(buffer[buffer_index], sizeof(buffer) - buffer_index);
-		PrintToChat(client, buffer);
+		C_SendMessage(client, buffer);
 	}
 }
 
