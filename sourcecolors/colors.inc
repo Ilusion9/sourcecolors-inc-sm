@@ -73,13 +73,44 @@ stock void C_Format(char[] message, int maxlen)
 			
 			if (pos != -1)
 			{
-				color[pos] = 0;
-				
+				strcopy(color[pos], sizeof(color) - pos, "\0");
 				int newIndex = C_GetColor(buffer[buffer_index], sizeof(buffer) - buffer_index, color);
+				
 				if (newIndex)
 				{
 					buffer_index += newIndex;
-					i += pos + 2;
+					i += (pos + 2);
+					continue;
+				}
+			}
+		}
+		
+		buffer[buffer_index] = message[i];
+		buffer_index++;
+	}
+
+	strcopy(message, maxlen, buffer);
+}
+
+stock void C_RemoveColors(char[] message, int maxlen)
+{
+	int buffer_index = 0;
+	char buffer[MAX_MESSAGE_LENGTH];
+
+	for (int i = 0; i < maxlen && message[i] != '\0'; i++)
+	{
+		if (message[i] == '{' && message[i + 1] == '$')
+		{
+			char color[MAX_MESSAGE_LENGTH];
+			strcopy(color, sizeof(color), message[i + 2]);
+			int pos = FindCharInString(color, '}');
+			
+			if (pos != -1)
+			{
+				strcopy(color[pos], sizeof(color) - pos, "\0");
+				if (C_IsValidColor(color))
+				{
+					i += (pos + 2);
 					continue;
 				}
 			}
@@ -103,4 +134,17 @@ stock int C_GetColor(char[] colorHex, int colorHexLen, const char[] colorTag)
 	}
 	
 	return 0;
+}
+
+stock bool C_IsValidColor(const char[] colorTag)
+{
+	for (int i = 0; i < sizeof(g_Colors); i++)
+	{
+		if (StrEqual(colorTag, g_Colors[i].colorTag, false))
+		{
+			return true;
+		}
+	}
+	
+	return false;
 }
