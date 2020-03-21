@@ -3,29 +3,27 @@
 #endif
 #define _colors_included
  
-ColorInfo g_Colors[] = {
+ColorInfo g_MultiColors[] = {
 	{ "default",      "\x01" },
 	{ "team",         "\x03" },
-	{ "darkred",      "\x02" },
-	{ "green",        "\x04" },
-	{ "lightgreen",   "\x05" },
-	{ "lime",         "\x06" },
-	{ "red",          "\x07" },
-	{ "grey",         "\x08" },
-	{ "yellow",       "\x09" },
-	{ "orange",       "\x10" },
-	{ "bluegrey",     "\x0A" },
-	{ "blue",         "\x0B" },
-	{ "darkblue",     "\x0C" },
-	{ "grey2",        "\x0D" },
-	{ "orchid",       "\x0E" },
-	{ "lightred",     "\x0F" }
+	{ "red",          "\x07FF4040" },
+	{ "blue",         "\x0799CCFF" },
+	{ "green",        "\x073EFF3E" },
+	{ "white",        "\x07FFFFFF" },
+	{ "yellow",       "\x07FFFF00" },
+	{ "purple",       "\x07800080" },
+	{ "orange",       "\x07FFA500" },
+	{ "lime",         "\x0700FF00" },
+	{ "grey",         "\x07CCCCCC" },
+	{ "black",        "\x07000000" }
 };
 
 stock void C_SendMessage(int client, const char[] message, int author = 0)
 {
+	bool chatMessage = true;
 	if (!author)
 	{
+		chatMessage = false;
 		author = client;
 	}
 	
@@ -39,7 +37,7 @@ stock void C_SendMessage(int client, const char[] message, int author = 0)
 	if (GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available && GetUserMessageType() == UM_Protobuf)
 	{
 		PbSetInt(buf, "ent_idx", author);
-		PbSetBool(buf, "chat", false);
+		PbSetBool(buf, "chat", chatMessage);
 		PbSetString(buf, "msg_name", message);
 		PbAddString(buf, "params", "");
 		PbAddString(buf, "params", "");
@@ -49,7 +47,7 @@ stock void C_SendMessage(int client, const char[] message, int author = 0)
 	else
 	{
 		BfWriteByte(buf, author); // Message author
-		BfWriteByte(buf, true); // Chat message
+		BfWriteByte(buf, chatMessage); // Chat message
 		BfWriteString(buf, message); // Message text
 	}
 	
