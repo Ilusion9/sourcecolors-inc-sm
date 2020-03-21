@@ -47,11 +47,21 @@ etc.
 ```
 
 # Functions
-```
-CPrintToChat(int client, const char[] message, any ...);
-CPrintToChat_Ex(int client, int author, const char[] message, any ...)
-CPrintToChatAll(const char[] message, any ...)
-CPrintToChatAll_Ex(int author, const char[] message, any ...)
+```csharp
+CPrintToChat(int client, const char[] format, any ...);
+// Prints a message to a specific client. The chat sound is disabled.
+
+CPrintToChat_Ex(int client, int author, const char[] format, any ...)
+// Prints a message to a specific client. The chat sound is enabled.
+
+CPrintToChatAll(const char[] format, any ...)
+// Prints a message to a all clients. The chat sound is disabled.
+
+CPrintToChatAll_Ex(int author, const char[] format, any ...)
+// Prints a message to a all clients. The chat sound is enabled.
+
+CReplyToCommand(int client, const char[] format, any ...)
+// Replies to a message in a command. The chat sound is disabled.
 ```
 
 I will come up with the rest.
