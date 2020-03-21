@@ -47,7 +47,7 @@ stock void CPrintToChat(int client, const char[] message, any ...)
 	}
 }
 
-stock void CPrintToChatEx(int client, int author, const char[] message, any ...)
+stock void CPrintToChat_Ex(int client, int author, const char[] message, any ...)
 {
 	if (client < 1 || client > MaxClients)
 	{
@@ -110,6 +110,43 @@ stock void CPrintToChatAll(const char[] message, any ...)
 			{
 				C_Format(buffer[buffer_index], sizeof(buffer) - buffer_index);
 				C_SendMessage(i, buffer);
+			}
+		}
+	}
+}
+
+stock void CPrintToChatAll_Ex(int author, const char[] message, any ...)
+{
+	if (author < 1 || author > MaxClients)
+	{
+		ThrowError("Invalid author index %d", author);
+	}
+	
+	if (!IsClientInGame(author))
+	{
+		ThrowError("Author %i is not in game", author);
+	}
+	
+	bool multiColors = IsSource2009();
+	char buffer[MAX_MESSAGE_LENGTH];
+	
+	for (int i = 1; i <= MaxClients; i++)
+	{
+		if (IsClientInGame(i) && !IsFakeClient(i))
+		{
+			SetGlobalTransTarget(i);
+			int buffer_index = CPreFormat(buffer, sizeof(buffer));
+
+			VFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, message, 2);
+			if (multiColors)
+			{
+				MC_Format(buffer[buffer_index], sizeof(buffer) - buffer_index);
+				MC_SendMessage(i, buffer, author);
+			}
+			else
+			{
+				C_Format(buffer[buffer_index], sizeof(buffer) - buffer_index);
+				C_SendMessage(i, buffer, author);
 			}
 		}
 	}
