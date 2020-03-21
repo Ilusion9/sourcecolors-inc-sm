@@ -84,25 +84,22 @@ stock void MC_Format(char[] message, int maxlen)
 		{
 			if (message[i + 1] == '#')
 			{
-				int j = i + 2;
-				char color[6];
+				char color[MAX_MESSAGE_LENGTH];
+				strcopy(color, sizeof(color), message[i + 2]);
 				
-				for (int icolor = 0; icolor < 6; icolor++)
+				int pos = FindCharInString(color, '}');
+				if (pos == 6)
 				{
-					color[icolor] = message[j];
-					j++;
-				}
-				
-				if (message[j] == '}')
-				{
+					strcopy(color[pos], sizeof(color) - pos, "\0");
+					
 					Regex exp = new Regex("^([A-F0-9])+$");
 					int matches = exp.Match(color);
 					delete exp;
-				
+					
 					if (matches > 0)
 					{
 						buffer_index += Format(buffer[buffer_index], sizeof(buffer) - buffer_index, "\x07%s", color);
-						i = j;
+						i += (pos + 2);
 						continue;
 					}
 				}
@@ -111,17 +108,17 @@ stock void MC_Format(char[] message, int maxlen)
 			{
 				char color[MAX_MESSAGE_LENGTH];
 				strcopy(color, sizeof(color), message[i + 2]);
-				int pos = FindCharInString(color, '}');
 				
+				int pos = FindCharInString(color, '}');
 				if (pos != -1)
 				{
-					color[pos] = 0;
-					
+					strcopy(color[pos], sizeof(color) - pos, "\0");
 					int newIndex = MC_GetColor(buffer[buffer_index], sizeof(buffer) - buffer_index, color);
+					
 					if (newIndex)
 					{
 						buffer_index += newIndex;
-						i += pos + 2;
+						i += (pos + 2);
 						continue;
 					}
 				}
@@ -135,6 +132,62 @@ stock void MC_Format(char[] message, int maxlen)
 	strcopy(message, maxlen, buffer);
 }
 
+stock void MC_RemoveColors(char[] message, int maxlen)
+{
+	int buffer_index = 0;
+	char buffer[MAX_MESSAGE_LENGTH];
+
+	for (int i = 0; i < maxlen && message[i] != '\0'; i++)
+	{
+		if (message[i] == '{')
+		{
+			if (message[i + 1] == '#')
+			{
+				char color[MAX_MESSAGE_LENGTH];
+				strcopy(color, sizeof(color), message[i + 2]);
+				
+				int pos = FindCharInString(color, '}');
+				if (pos == 6)
+				{
+					strcopy(color[pos], sizeof(color) - pos, "\0");
+					
+					Regex exp = new Regex("^([A-F0-9])+$");
+					int matches = exp.Match(color);
+					delete exp;
+					
+					if (matches > 0)
+					{
+						i += (pos + 2);
+						continue;
+					}
+				}
+			}
+			else if (message[i + 1] == '$')
+			{
+				char color[MAX_MESSAGE_LENGTH];
+				strcopy(color, sizeof(color), message[i + 2]);
+				
+				int pos = FindCharInString(color, '}');
+				if (pos != -1)
+				{
+					strcopy(color[pos], sizeof(color) - pos, "\0");					
+					if (MC_IsValidColor(color))
+					{
+						i += (pos + 2);
+						continue;
+					}
+				}
+			}
+		}
+		
+		buffer[buffer_index] = message[i];
+		buffer_index++;
+	}
+
+	strcopy(message, maxlen, buffer);
+}
+
+
 stock int MC_GetColor(char[] colorHex, int colorHexLen, const char[] colorTag)
 {
 	for (int i = 0; i < sizeof(g_MultiColors); i++)
@@ -146,4 +199,17 @@ stock int MC_GetColor(char[] colorHex, int colorHexLen, const char[] colorTag)
 	}
 	
 	return 0;
+}
+
+stock bool MC_IsValidColor(const char[] colorTag)
+{
+	for (int i = 0; i < sizeof(g_MultiColors); i++)
+	{
+		if (StrEqual(colorTag, g_MultiColors[i].colorTag, false))
+		{
+			return true;
+		}
+	}
+	
+	return false;
 }
