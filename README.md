@@ -29,7 +29,7 @@ etc.
 ## Colors for other games
 ```
 {$default}
-{$team} // Only with PrintToChatEx function
+{$team}
 {$darkred}
 {$green}
 {$lightgreen}
@@ -49,8 +49,9 @@ etc.
 # Functions
 ```
 CPrintToChat(int client, const char[] message, any ...);
-CPrintToChatEx(int client, int author, const char[] message, any ...)
+CPrintToChat_Ex(int client, int author, const char[] message, any ...)
 CPrintToChatAll(const char[] message, any ...)
+CPrintToChatAll_Ex(int author, const char[] message, any ...)
 ```
 
 I will come up with the rest.
