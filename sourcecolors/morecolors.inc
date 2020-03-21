@@ -42,7 +42,7 @@ stock void MC_SendMessage(int client, const char[] message, int author = 0)
 		if (GetEngineVersion() == Engine_DODS)
 		{
 			char color[64];
-			int authorTeam = GetClientTeam(author);
+			int authorTeam = IsClientInGame(author) ? GetClientTeam(author) : 0;
 			
 			Format(color, sizeof(color), "\x07%s", g_DodsTeamColors[authorTeam]);
 			ReplaceString(buffer, sizeof(buffer), "\x03", color, false);
