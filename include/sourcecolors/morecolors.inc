@@ -25,12 +25,10 @@ char g_DodsTeamColors[] = {
 	"\x07FF4040"
 };
 
-stock void MC_SendMessage(int client, const char[] message, int author = 0)
+stock void MC_SendMessage(int client, const char[] message, int author = -1, bool chatMessage = false)
 {
-	bool chatMessage = true;
-	if (!author)
+	if (author == -1)
 	{
-		chatMessage = false;
 		author = client;
 	}
 	
