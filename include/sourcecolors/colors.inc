@@ -22,12 +22,10 @@ ColorInfo g_Colors[] = {
 	{ "lightred",     "\x0F" }
 };
 
-stock void C_SendMessage(int client, const char[] message, int author = 0)
+stock void C_SendMessage(int client, const char[] message, int author = -1, bool chatMessage = false)
 {
-	bool chatMessage = true;
-	if (!author)
+	if (author == -1)
 	{
-		chatMessage = false;
 		author = client;
 	}
 	
