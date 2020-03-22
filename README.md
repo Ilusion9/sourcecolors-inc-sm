@@ -58,7 +58,7 @@ CPrintToChat_Ex(int client, int author, const char[] format, any ...)
 
 CPrintToChatAll(const char[] format, any ...)
 // Prints a message to a all clients. The chat sound is disabled.
-// If teamcolor is used, for every client will be displayed their teamcolor.
+// If teamcolor is used, the client's teamcolor will be displayed.
 
 CPrintToChatAll_Ex(int author, const char[] format, any ...)
 // Prints a message to a all clients. The chat sound is enabled.
