@@ -87,7 +87,7 @@ CReplyToCommand(int client, const char[] format, any ...)
  * in their chat text, except for the originating client, who receives 
  * the message both in chat and console.
  * The chat sound is enabled. If teamcolor is used, the client's teamcolor will be displayed.
- * /
+ */
 CShowActivity2(int client, const char[] tag, const char[] format, any ...)
 
 CPreFormat(char[] format, int maxlen)
