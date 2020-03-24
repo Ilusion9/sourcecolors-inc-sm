@@ -213,7 +213,7 @@ stock void CReplyToCommand(int client, const char[] format, any ...)
  * @param ...           Variable number of format parameters.
  * @error               If the client is not connected or invalid.
  */
-stock void CShowActivity2(int client, const char[] tag, const char[] format, any ...)
+stock void CShowActivity(int client, const char[] tag, const char[] format, any ...)
 {
 	char clientName[MAX_NAME_LENGTH] = "CONSOLE";
 	char signUser[MAX_MESSAGE_LENGTH] = "ADMIN";
@@ -312,8 +312,9 @@ stock void CShowActivity2(int client, const char[] tag, const char[] format, any
  * @param format        Formatting rules.
  * @param ...           Variable number of format parameters.
  * @error               If the client is not connected or invalid.
+ * @error               If the author is not connected or invalid.
  */
-stock void CShowActivity2_Ex(int client, int author, const char[] tag, const char[] format, any ...)
+stock void CShowActivity_Ex(int client, int author, const char[] tag, const char[] format, any ...)
 {
 	if (author)
 	{
@@ -354,13 +355,13 @@ stock void CShowActivity2_Ex(int client, int author, const char[] tag, const cha
 			Format(signUser, sizeof(signUser), "PLAYER");
 		}
 		
-		VFormat(buffer, sizeof(buffer), format, 4);
+		VFormat(buffer, sizeof(buffer), format, 5);
 		CPrintToChat_Ex(client, author, true, "%s%s", tag, buffer);
 	}
 	else
 	{
 		SetGlobalTransTarget(LANG_SERVER);
-		VFormat(buffer, sizeof(buffer), format, 4);
+		VFormat(buffer, sizeof(buffer), format, 5);
 		CRemoveColors(buffer, sizeof(buffer));
 		PrintToServer("%s%s", tag, buffer);
 	}
@@ -377,7 +378,7 @@ stock void CShowActivity2_Ex(int client, int author, const char[] tag, const cha
 		if (i != client && IsClientInGame(i) && !IsFakeClient(i))
 		{
 			SetGlobalTransTarget(i);
-			VFormat(buffer, sizeof(buffer), format, 4);
+			VFormat(buffer, sizeof(buffer), format, 5);
 			
 			AdminId id = GetUserAdmin(i);
 			if (id == INVALID_ADMIN_ID || !GetAdminFlag(id, Admin_Generic, Access_Effective))
@@ -413,16 +414,9 @@ stock void CShowActivity2_Ex(int client, int author, const char[] tag, const cha
 	}
 }
 
-stock int CPreFormat(char[] format, int maxlen)
-{
-	if (GetEngineVersion() == Engine_CSGO)
-	{
-		return Format(format, maxlen, " \x01");
-	}
-
-	return Format(format, maxlen, "\x01");
-}
-
+/**
+ * Replace color tags from string with actual color values.
+ */
 stock void CFormat(char[] format, int maxlen)
 {
 	int format_index = CPreFormat(format, maxlen);
@@ -437,6 +431,9 @@ stock void CFormat(char[] format, int maxlen)
 	}
 }
 
+/**
+ * Remove color tags from string.
+ */
 stock void CRemoveColors(char[] format, int maxlen)
 {
 	if (IsSource2009())
@@ -447,6 +444,16 @@ stock void CRemoveColors(char[] format, int maxlen)
 	{
 		C_RemoveColors(format, maxlen);
 	}
+}
+
+stock int CPreFormat(char[] format, int maxlen)
+{
+	if (GetEngineVersion() == Engine_CSGO)
+	{
+		return Format(format, maxlen, " \x01");
+	}
+
+	return Format(format, maxlen, "\x01");
 }
 
 stock void CSendMessage(int client, const char[] message, int author = -1, bool chatMessage = false)
