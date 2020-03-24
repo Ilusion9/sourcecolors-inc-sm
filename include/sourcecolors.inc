@@ -232,17 +232,26 @@ stock void CShowActivity(int client, const char[] tag, const char[] format, any 
 			ThrowError("Client %i is not connected", client);
 		}
 		
-		SetGlobalTransTarget(client);
 		GetClientName(client, clientName, sizeof(clientName));
 		
 		AdminId id = GetUserAdmin(client);
 		if (id == INVALID_ADMIN_ID || !GetAdminFlag(id, Admin_Generic, Access_Effective))
 		{
-			Format(signUser, sizeof(signUser), "PLAYER");
+			signUser = "PLAYER";
 		}
 		
+		SetGlobalTransTarget(client);
+
 		VFormat(buffer, sizeof(buffer), format, 4);
-		CPrintToChat_Ex(client, client, true, "%s%s", tag, buffer);
+		if (GetCmdReplySource() == SM_REPLY_TO_CONSOLE)
+		{
+			CRemoveColors(buffer, sizeof(buffer));
+			PrintToConsole(client, "%s%s", tag, buffer);
+		}
+		else
+		{
+			CPrintToChat_Ex(client, client, true, "%s%s", tag, buffer);
+		}
 	}
 	else
 	{
@@ -346,17 +355,26 @@ stock void CShowActivity_Ex(int client, int author, const char[] tag, const char
 			ThrowError("Client %i is not connected", client);
 		}
 		
-		SetGlobalTransTarget(client);
 		GetClientName(client, clientName, sizeof(clientName));
 		
 		AdminId id = GetUserAdmin(client);
 		if (id == INVALID_ADMIN_ID || !GetAdminFlag(id, Admin_Generic, Access_Effective))
 		{
-			Format(signUser, sizeof(signUser), "PLAYER");
+			signUser = "PLAYER";
 		}
 		
+		SetGlobalTransTarget(client);
+		
 		VFormat(buffer, sizeof(buffer), format, 5);
-		CPrintToChat_Ex(client, author, true, "%s%s", tag, buffer);
+		if (GetCmdReplySource() == SM_REPLY_TO_CONSOLE)
+		{
+			CRemoveColors(buffer, sizeof(buffer));
+			PrintToConsole(client, "%s%s", tag, buffer);
+		}
+		else
+		{
+			CPrintToChat_Ex(client, client, true, "%s%s", tag, buffer);
+		}
 	}
 	else
 	{
