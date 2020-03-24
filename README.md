@@ -85,14 +85,14 @@ CReplyToCommand(int client, const char[] format, any ...)
  * Displays usage of an admin command to users depending on the setting of the sm_show_activity cvar.
  * The chat sound is enabled. If teamcolor is used, the client's teamcolor will be displayed.
  */
-CShowActivity2(int client, const char[] tag, const char[] format, any ...)
+CShowActivity(int client, const char[] tag, const char[] format, any ...)
 
 /**
  * Displays usage of an admin command to users depending on the setting of the sm_show_activity cvar.
  * The chat sound is enabled. If teamcolor is used, the author's teamcolor will be displayed.
  * Index 0 as author is accepted and the teamcolor will be displayed exactly as in PrintToChat.
  */
-CShowActivity2_Ex(int client, int author, const char[] tag, const char[] format, any ...)
+CShowActivity_Ex(int client, int author, const char[] tag, const char[] format, any ...)
 
 /**
  * Replace color tags from string with actual color values.
@@ -104,5 +104,3 @@ CFormat(char[] format, int maxlen)
  */
 CRemoveColors(char[] format, int maxlen)
 ```
-
-TO DO: Add CShowActivity, CShowActivity_Ex and examples on how to use all functions.
