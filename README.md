@@ -47,7 +47,7 @@ etc.
 ```
 
 # Functions
-```csharp
+```sourcepawn
 
 /**
  * Prints a message to a specific client in the chat area.
