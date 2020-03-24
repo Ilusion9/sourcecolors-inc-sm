@@ -37,12 +37,10 @@ stock void CPrintToChat(int client, const char[] format, any ...)
 	}
 	
 	SetGlobalTransTarget(client);
-	
 	char buffer[MAX_MESSAGE_LENGTH];
-	int buffer_index = CPreFormat(buffer, sizeof(buffer));
 	
-	VFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, format, 3);
-	CFormat(buffer[buffer_index], sizeof(buffer) - buffer_index);
+	VFormat(buffer, sizeof(buffer), format, 3);
+	CFormat(buffer, sizeof(buffer));
 	CSendMessage(client, buffer);
 }
 
@@ -85,10 +83,9 @@ stock void CPrintToChat_Ex(int client, int author, bool playSound, const char[] 
 	
 	SetGlobalTransTarget(client);
 	char buffer[MAX_MESSAGE_LENGTH];
-	int buffer_index = CPreFormat(buffer, sizeof(buffer));
 	
-	VFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, format, 5);
-	CFormat(buffer[buffer_index], sizeof(buffer) - buffer_index);
+	VFormat(buffer, sizeof(buffer), format, 5);
+	CFormat(buffer, sizeof(buffer));
 	CSendMessage(client, buffer, author, playSound);
 }
 
@@ -108,10 +105,7 @@ stock void CPrintToChatAll(const char[] format, any ...)
 		{
 			SetGlobalTransTarget(i);
 			VFormat(buffer, sizeof(buffer), format, 2);
-			int buffer_index = CPreFormat(buffer, sizeof(buffer));
-
-			VFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, format, 2);
-			CFormat(buffer[buffer_index], sizeof(buffer) - buffer_index);
+			CFormat(buffer, sizeof(buffer));
 			CSendMessage(i, buffer);
 		}
 	}
@@ -148,10 +142,8 @@ stock void CPrintToChatAll_Ex(int author, bool playSound, const char[] format, a
 		if (IsClientInGame(i) && !IsFakeClient(i))
 		{
 			SetGlobalTransTarget(i);
-			int buffer_index = CPreFormat(buffer, sizeof(buffer));
-
-			VFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, format, 4);
-			CFormat(buffer[buffer_index], sizeof(buffer) - buffer_index);
+			VFormat(buffer, sizeof(buffer), format, 4);
+			CFormat(buffer, sizeof(buffer));
 			CSendMessage(i, buffer, author, playSound);
 		}
 	}
@@ -202,9 +194,8 @@ stock void CReplyToCommand(int client, const char[] format, any ...)
 	}
 	else
 	{
-		int buffer_index = CPreFormat(buffer, sizeof(buffer));
-		VFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, format, 3);
-		CFormat(buffer[buffer_index], sizeof(buffer) - buffer_index);
+		VFormat(buffer, sizeof(buffer), format, 3);
+		CFormat(buffer, sizeof(buffer));
 		CSendMessage(client, buffer);
 	}
 }
@@ -309,6 +300,119 @@ stock void CShowActivity2(int client, const char[] tag, const char[] format, any
 	}
 }
 
+/**
+ * Displays usage of an admin command to users depending on the 
+ * setting of the sm_show_activity cvar.  All users receive a message 
+ * in their chat text, except for the originating client, who receives 
+ * the message both in chat and console.
+ * The chat sound is enabled. If teamcolor is used, the author's teamcolor will be displayed.
+ *
+ * @param client        Client index doing the action, or 0 for server.
+ * @param tag           Tag to prepend to the message.
+ * @param format        Formatting rules.
+ * @param ...           Variable number of format parameters.
+ * @error               If the client is not connected or invalid.
+ */
+stock void CShowActivity2_Ex(int client, int author, const char[] tag, const char[] format, any ...)
+{
+	if (author)
+	{
+		if (author < 1 || author > MaxClients)
+		{
+			ThrowError("Invalid author index %d", author);
+		}
+		
+		if (!IsClientConnected(author))
+		{
+			ThrowError("Author %i is not in game", author);
+		}
+	}
+	
+	char clientName[MAX_NAME_LENGTH] = "CONSOLE";
+	char signUser[MAX_MESSAGE_LENGTH] = "ADMIN";
+	char buffer[MAX_MESSAGE_LENGTH];
+	
+	// Send message to client
+	if (client)
+	{
+		if (client < 1 || client > MaxClients)
+		{
+			ThrowError("Invalid client index %d", client);
+		}
+		
+		if (!IsClientConnected(client))
+		{
+			ThrowError("Client %i is not connected", client);
+		}
+		
+		SetGlobalTransTarget(client);
+		GetClientName(client, clientName, sizeof(clientName));
+		
+		AdminId id = GetUserAdmin(client);
+		if (id == INVALID_ADMIN_ID || !GetAdminFlag(id, Admin_Generic, Access_Effective))
+		{
+			Format(signUser, sizeof(signUser), "PLAYER");
+		}
+		
+		VFormat(buffer, sizeof(buffer), format, 4);
+		CPrintToChat_Ex(client, author, true, "%s%s", tag, buffer);
+	}
+	else
+	{
+		SetGlobalTransTarget(LANG_SERVER);
+		VFormat(buffer, sizeof(buffer), format, 4);
+		CRemoveColors(buffer, sizeof(buffer));
+		PrintToServer("%s%s", tag, buffer);
+	}
+	
+	// Get sm_show_activity convar
+	ConVar sm_show_activity = FindConVar("sm_show_activity");
+	if (!sm_show_activity || !sm_show_activity.IntValue)
+	{
+		return;
+	}
+	
+	for (int i = 1; i <= MaxClients; i++)
+	{
+		if (i != client && IsClientInGame(i) && !IsFakeClient(i))
+		{
+			SetGlobalTransTarget(i);
+			VFormat(buffer, sizeof(buffer), format, 4);
+			
+			AdminId id = GetUserAdmin(i);
+			if (id == INVALID_ADMIN_ID || !GetAdminFlag(id, Admin_Generic, Access_Effective))
+			{
+				if ((sm_show_activity.IntValue & 1) || (sm_show_activity.IntValue & 2))
+				{
+					if (sm_show_activity.IntValue & 2)
+					{
+						CPrintToChat_Ex(i, author, true, "%s%s: %s", tag, clientName, buffer);
+					}
+					else
+					{
+						CPrintToChat_Ex(i, author, true, "%s%s: %s", tag, signUser, buffer);
+					}
+				}
+			}
+			else
+			{
+				bool is_root = GetAdminFlag(id, Admin_Root, Access_Effective);
+				if ((sm_show_activity.IntValue & 4) || (sm_show_activity.IntValue & 8) || ((sm_show_activity.IntValue & 16) && is_root))
+				{
+					if ((sm_show_activity.IntValue & 8) || ((sm_show_activity.IntValue & 16) && is_root))
+					{
+						CPrintToChat_Ex(i, author, true, "%s%s: %s", tag, clientName, buffer);
+					}
+					else
+					{
+						CPrintToChat_Ex(i, author, true, "%s%s: %s", tag, signUser, buffer);
+					}
+				}
+			}
+		}
+	}
+}
+
 stock int CPreFormat(char[] format, int maxlen)
 {
 	if (GetEngineVersion() == Engine_CSGO)
@@ -321,13 +425,15 @@ stock int CPreFormat(char[] format, int maxlen)
 
 stock void CFormat(char[] format, int maxlen)
 {
+	int format_index = CPreFormat(format, maxlen);
+	
 	if (IsSource2009())
 	{
-		MC_Format(format, maxlen);
+		MC_Format(format[format_index], maxlen - format_index);
 	}
 	else
 	{
-		C_Format(format, maxlen);
+		C_Format(format[format_index], maxlen - format_index);
 	}
 }
 
