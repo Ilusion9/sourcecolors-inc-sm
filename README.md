@@ -92,9 +92,16 @@ CShowActivity2(int client, const char[] tag, const char[] format, any ...)
  * The chat sound is enabled. If teamcolor is used, the author's teamcolor will be displayed.
  * Index 0 as author is accepted and the teamcolor will be displayed exactly as in PrintToChat.
  */
-void CShowActivity2_Ex(int client, int author, const char[] tag, const char[] format, any ...)
+CShowActivity2_Ex(int client, int author, const char[] tag, const char[] format, any ...)
 
+/**
+ * Replace color tags from string with actual color values.
+ */
 CFormat(char[] format, int maxlen)
+
+/**
+ * Remove color tags from string.
+ */
 CRemoveColors(char[] format, int maxlen)
 ```
 
