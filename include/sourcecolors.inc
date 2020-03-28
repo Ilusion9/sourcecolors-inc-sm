@@ -437,16 +437,26 @@ stock void CShowActivity_Ex(int client, int author, const char[] tag, const char
  */
 stock void CFormat(char[] format, int maxlen)
 {
-	int format_index = CPreFormat(format, maxlen);
+	int buffer_index;
+	char buffer[MAX_MESSAGE_LENGTH];
+	
+	if (GetEngineVersion() == Engine_CSGO)
+	{
+		buffer[buffer_index++] = ' ';
+	}
+
+	Format(buffer[buffer_index], sizeof(buffer) - buffer_index, "\x01");
 	
 	if (IsSource2009())
 	{
-		MC_Format(format[format_index], maxlen - format_index);
+		MC_Format(format, maxlen);
 	}
 	else
 	{
-		C_Format(format[format_index], maxlen - format_index);
+		C_Format(format, maxlen);
 	}
+	
+	Format(format, maxlen, "%s%s", buffer, format);
 }
 
 /**
