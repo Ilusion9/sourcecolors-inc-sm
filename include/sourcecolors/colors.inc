@@ -56,7 +56,7 @@ stock void C_SendMessage(int client, const char[] message, int author = -1, bool
 	EndMessage();
 }
 
-stock void C_Format(char[] message, int maxlen)
+stock int C_Format(char[] message, int maxlen)
 {
 	int buffer_index = 0;
 	char buffer[MAX_MESSAGE_LENGTH];
@@ -87,10 +87,10 @@ stock void C_Format(char[] message, int maxlen)
 		buffer_index++;
 	}
 
-	strcopy(message, maxlen, buffer);
+	return Format(message, maxlen, buffer);
 }
 
-stock void C_RemoveColors(char[] message, int maxlen)
+stock int C_RemoveColors(char[] message, int maxlen)
 {
 	int buffer_index = 0;
 	char buffer[MAX_MESSAGE_LENGTH];
@@ -118,7 +118,7 @@ stock void C_RemoveColors(char[] message, int maxlen)
 		buffer_index++;
 	}
 
-	strcopy(message, maxlen, buffer);
+	return Format(message, maxlen, buffer);
 }
 
 stock int C_GetColor(char[] colorHex, int colorHexLen, const char[] colorTag)
