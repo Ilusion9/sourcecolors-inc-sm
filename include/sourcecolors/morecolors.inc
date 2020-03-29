@@ -71,7 +71,7 @@ stock void MC_SendMessage(int client, const char[] message, int author = -1, boo
 	EndMessage();
 }
 
-stock void MC_Format(char[] message, int maxlen)
+stock int MC_Format(char[] message, int maxlen)
 {
 	int buffer_index = 0;
 	char buffer[MAX_MESSAGE_LENGTH];
@@ -127,10 +127,10 @@ stock void MC_Format(char[] message, int maxlen)
 		buffer_index++;
 	}
 
-	strcopy(message, maxlen, buffer);
+	return Format(message, maxlen, buffer);
 }
 
-stock void MC_RemoveColors(char[] message, int maxlen)
+stock int MC_RemoveColors(char[] message, int maxlen)
 {
 	int buffer_index = 0;
 	char buffer[MAX_MESSAGE_LENGTH];
@@ -182,7 +182,7 @@ stock void MC_RemoveColors(char[] message, int maxlen)
 		buffer_index++;
 	}
 
-	strcopy(message, maxlen, buffer);
+	return Format(message, maxlen, buffer);
 }
 
 
