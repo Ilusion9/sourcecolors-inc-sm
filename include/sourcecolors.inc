@@ -36,11 +36,15 @@ stock void CPrintToChat(int client, const char[] format, any ...)
 		ThrowError("Client %i is not connected", client);
 	}
 	
-	SetGlobalTransTarget(client);
+	int buffer_index;
 	char buffer[MAX_MESSAGE_LENGTH];
 	
-	VFormat(buffer, sizeof(buffer), format, 3);
-	CFormat(buffer, sizeof(buffer));
+	SetGlobalTransTarget(client);
+
+	buffer_index = CPreFormat(buffer, sizeof(buffer));
+	VFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, format, 3);
+	
+	CFormat(buffer[buffer_index], sizeof(buffer) - buffer_index);
 	CSendMessage(client, buffer);
 }
 
@@ -81,11 +85,15 @@ stock void CPrintToChat_Ex(int client, int author, bool playSound, const char[] 
 		}
 	}
 	
-	SetGlobalTransTarget(client);
+	int buffer_index;
 	char buffer[MAX_MESSAGE_LENGTH];
 	
-	VFormat(buffer, sizeof(buffer), format, 5);
-	CFormat(buffer, sizeof(buffer));
+	SetGlobalTransTarget(client);
+
+	buffer_index = CPreFormat(buffer, sizeof(buffer));
+	VFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, format, 5);
+	
+	CFormat(buffer[buffer_index], sizeof(buffer) - buffer_index);
 	CSendMessage(client, buffer, author, playSound);
 }
 
@@ -98,14 +106,19 @@ stock void CPrintToChat_Ex(int client, int author, bool playSound, const char[] 
  */
 stock void CPrintToChatAll(const char[] format, any ...)
 {
+	int buffer_index;
 	char buffer[MAX_MESSAGE_LENGTH];
+	
 	for (int i = 1; i <= MaxClients; i++)
 	{
 		if (IsClientInGame(i) && !IsFakeClient(i))
 		{
 			SetGlobalTransTarget(i);
-			VFormat(buffer, sizeof(buffer), format, 2);
-			CFormat(buffer, sizeof(buffer));
+			
+			buffer_index = CPreFormat(buffer, sizeof(buffer));
+			VFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, format, 2);
+			
+			CFormat(buffer[buffer_index], sizeof(buffer) - buffer_index);
 			CSendMessage(i, buffer);
 		}
 	}
@@ -136,14 +149,19 @@ stock void CPrintToChatAll_Ex(int author, bool playSound, const char[] format, a
 		}
 	}
 	
+	int buffer_index;
 	char buffer[MAX_MESSAGE_LENGTH];
+	
 	for (int i = 1; i <= MaxClients; i++)
 	{
 		if (IsClientInGame(i) && !IsFakeClient(i))
 		{
 			SetGlobalTransTarget(i);
-			VFormat(buffer, sizeof(buffer), format, 4);
-			CFormat(buffer, sizeof(buffer));
+			
+			buffer_index = CPreFormat(buffer, sizeof(buffer));
+			VFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, format, 4);
+			
+			CFormat(buffer[buffer_index], sizeof(buffer) - buffer_index);
 			CSendMessage(i, buffer, author, playSound);
 		}
 	}
@@ -194,8 +212,9 @@ stock void CReplyToCommand(int client, const char[] format, any ...)
 	}
 	else
 	{
-		VFormat(buffer, sizeof(buffer), format, 3);
-		CFormat(buffer, sizeof(buffer));
+		int buffer_index = CPreFormat(buffer, sizeof(buffer));
+		VFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, format, 3);
+		CFormat(buffer[buffer_index], sizeof(buffer) - buffer_index);
 		CSendMessage(client, buffer);
 	}
 }
@@ -433,55 +452,55 @@ stock void CShowActivity_Ex(int client, int author, const char[] tag, const char
 }
 
 /**
- * Replace color tags from string with actual color values.
+ * Prepares a string to display the message correctly in the chat.
+ *
+ * @param message   The string.
+ * @param maxlen    The maximum length of the string.
+ * @return          First free index in the string.
  */
-stock void CFormat(char[] format, int maxlen)
+ 
+stock int CPreFormat(char[] message, int maxlen)
 {
-	int buffer_index;
-	char buffer[MAX_MESSAGE_LENGTH];
-	
 	if (GetEngineVersion() == Engine_CSGO)
 	{
-		buffer[buffer_index++] = ' ';
-	}
-
-	Format(buffer[buffer_index], sizeof(buffer) - buffer_index, "\x01");
-	
-	if (IsSource2009())
-	{
-		MC_Format(format, maxlen);
-	}
-	else
-	{
-		C_Format(format, maxlen);
+		return Format(message, maxlen, " \x01");
 	}
 	
-	Format(format, maxlen, "%s%s", buffer, format);
+	return Format(message, maxlen, "\x01");
 }
 
 /**
- * Remove color tags from string.
+ * Replace color tags from string with actual color values.
+ *
+ * @param message   The string.
+ * @param maxlen    The maximum length of the string.
+ * @return          Number of cells written.
  */
-stock void CRemoveColors(char[] format, int maxlen)
+stock int CFormat(char[] format, int maxlen)
 {
 	if (IsSource2009())
 	{
-		MC_RemoveColors(format, maxlen);
+		return MC_Format(format, maxlen);
 	}
-	else
-	{
-		C_RemoveColors(format, maxlen);
-	}
+	
+	return C_Format(format, maxlen);
 }
 
-stock int CPreFormat(char[] format, int maxlen)
+/**
+ * Remove color tags from a string.
+ *
+ * @param message   The string.
+ * @param maxlen    The maximum length of the string.
+ * @return          The new size of the string.
+ */
+stock int CRemoveColors(char[] format, int maxlen)
 {
-	if (GetEngineVersion() == Engine_CSGO)
+	if (IsSource2009())
 	{
-		return Format(format, maxlen, " \x01");
+		return MC_RemoveColors(format, maxlen);
 	}
-
-	return Format(format, maxlen, "\x01");
+	
+	return C_RemoveColors(format, maxlen);
 }
 
 stock void CSendMessage(int client, const char[] message, int author = -1, bool chatMessage = false)
@@ -489,11 +508,10 @@ stock void CSendMessage(int client, const char[] message, int author = -1, bool 
 	if (IsSource2009())
 	{
 		MC_SendMessage(client, message, author, chatMessage);
+		return;
 	}
-	else
-	{
-		C_SendMessage(client, message, author, chatMessage);
-	}
+	
+	C_SendMessage(client, message, author, chatMessage);
 }
 
 stock bool IsSource2009()
