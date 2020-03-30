@@ -76,6 +76,19 @@ void CPrintToChatAll(const char[] format, any ...)
 void CPrintToChatAll_Ex(int author, bool playSound, const char[] format, any ...)
 
 /**
+ * Prints a message to all clients from a specific team in the chat area.
+ * The chat sound is disabled. If teamcolor is used, the client's teamcolor will be displayed.
+ */
+void CPrintToChatTeam(int team, const char[] format, any ...)
+
+/**
+ * Prints a message to all clients from a specific team in the chat area.
+ * The chat sound is disabled by default. If teamcolor is used, the author's teamcolor will be displayed.
+ * Index 0 as author is accepted and the teamcolor will be displayed exactly as in PrintToChat.
+ */
+void CPrintToChatTeam_Ex(int author, int team, bool playSound, const char[] format, any ...)
+
+/**
  * Replies to a message in a command.
  * The chat sound is disabled. If teamcolor is used, the client's teamcolor will be displayed.
  */
