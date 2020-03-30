@@ -111,16 +111,18 @@ stock void CPrintToChatAll(const char[] format, any ...)
 	
 	for (int i = 1; i <= MaxClients; i++)
 	{
-		if (IsClientInGame(i) && !IsFakeClient(i))
+		if (!IsClientInGame(i) || IsFakeClient(i))
 		{
-			SetGlobalTransTarget(i);
-			
-			buffer_index = CPreFormat(buffer, sizeof(buffer));
-			VFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, format, 2);
-			
-			CFormat(buffer[buffer_index], sizeof(buffer) - buffer_index);
-			CSendMessage(i, buffer);
+			continue;
 		}
+		
+		SetGlobalTransTarget(i);
+		
+		buffer_index = CPreFormat(buffer, sizeof(buffer));
+		VFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, format, 2);
+		
+		CFormat(buffer[buffer_index], sizeof(buffer) - buffer_index);
+		CSendMessage(i, buffer);
 	}
 }
 
@@ -154,16 +156,94 @@ stock void CPrintToChatAll_Ex(int author, bool playSound, const char[] format, a
 	
 	for (int i = 1; i <= MaxClients; i++)
 	{
-		if (IsClientInGame(i) && !IsFakeClient(i))
+		if (!IsClientInGame(i) || IsFakeClient(i))
 		{
-			SetGlobalTransTarget(i);
-			
-			buffer_index = CPreFormat(buffer, sizeof(buffer));
-			VFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, format, 4);
-			
-			CFormat(buffer[buffer_index], sizeof(buffer) - buffer_index);
-			CSendMessage(i, buffer, author, playSound);
+			continue;
 		}
+		
+		SetGlobalTransTarget(i);
+		
+		buffer_index = CPreFormat(buffer, sizeof(buffer));
+		VFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, format, 4);
+		
+		CFormat(buffer[buffer_index], sizeof(buffer) - buffer_index);
+		CSendMessage(i, buffer, author, playSound);
+	}
+}
+
+/**
+ * Prints a message to all clients from a specific team in the chat area.
+ * The chat sound is disabled. If teamcolor is used, the client's teamcolor will be displayed.
+ * 
+ * @param team          Team index.
+ * @param format        Formatting rules.
+ * @param ...           Variable number of format parameters.
+ */
+stock void CPrintToChatTeam(int team, const char[] format, any ...)
+{
+	int buffer_index;
+	char buffer[MAX_MESSAGE_LENGTH];
+	
+	for (int i = 1; i <= MaxClients; i++)
+	{
+		if (!IsClientInGame(i) || IsFakeClient(i) || GetClientTeam(i) != team)
+		{
+			continue;
+		}
+		
+		SetGlobalTransTarget(i);
+		
+		buffer_index = CPreFormat(buffer, sizeof(buffer));
+		VFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, format, 3);
+		
+		CFormat(buffer[buffer_index], sizeof(buffer) - buffer_index);
+		CSendMessage(i, buffer);
+	}
+}
+
+/**
+ * Prints a message to all clients from a specific team in the chat area.
+ * The chat sound is disabled by default. If teamcolor is used, the author's teamcolor will be displayed.
+ * Index 0 as author is accepted and the teamcolor will be displayed exactly as in PrintToChat.
+ *
+ * @param author        Author index.
+ * @param team          Team index.
+ * @param format        Formatting rules.
+ * @param ...           Variable number of format parameters.
+ * @error               If the author is not connected or invalid.
+ */
+stock void CPrintToChatTeam_Ex(int author, int team, bool playSound, const char[] format, any ...)
+{
+	if (author)
+	{
+		if (author < 1 || author > MaxClients)
+		{
+			ThrowError("Invalid author index %d", author);
+		}
+		
+		if (!IsClientConnected(author))
+		{
+			ThrowError("Author %i is not in game", author);
+		}
+	}
+	
+	int buffer_index;
+	char buffer[MAX_MESSAGE_LENGTH];
+	
+	for (int i = 1; i <= MaxClients; i++)
+	{
+		if (!IsClientInGame(i) || IsFakeClient(i) || GetClientTeam(i) != team)
+		{
+			continue;
+		}
+		
+		SetGlobalTransTarget(i);
+		
+		buffer_index = CPreFormat(buffer, sizeof(buffer));
+		VFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, format, 5);
+		
+		CFormat(buffer[buffer_index], sizeof(buffer) - buffer_index);
+		CSendMessage(i, buffer, author, playSound);
 	}
 }
 
@@ -458,7 +538,6 @@ stock void CShowActivity_Ex(int client, int author, const char[] tag, const char
  * @param maxlen    The maximum length of the string.
  * @return          First free index in the string.
  */
- 
 stock int CPreFormat(char[] message, int maxlen)
 {
 	if (GetEngineVersion() == Engine_CSGO)
@@ -470,7 +549,7 @@ stock int CPreFormat(char[] message, int maxlen)
 }
 
 /**
- * Replace color tags from string with actual color values.
+ * Replace color tags from a string with actual color values.
  *
  * @param message   The string.
  * @param maxlen    The maximum length of the string.
