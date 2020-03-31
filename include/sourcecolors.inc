@@ -472,7 +472,7 @@ stock void CShowActivity_Ex(int client, int author, const char[] tag, const char
 		}
 		else
 		{
-			CPrintToChat_Ex(client, client, true, "%s%s", tag, buffer);
+			CPrintToChat_Ex(client, author, true, "%s%s", tag, buffer);
 		}
 	}
 	else
