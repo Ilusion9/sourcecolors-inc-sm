@@ -51,59 +51,57 @@ etc.
 
 /**
  * Prints a message to a specific client in the chat area.
- * The chat sound is disabled. If teamcolor is used, the client's teamcolor will be displayed.
  */
 void CPrintToChat(int client, const char[] format, any ...);
 
 /**
  * Prints a message to a specific client in the chat area.
- * The chat sound is disabled by default. If teamcolor is used, the author's teamcolor will be displayed.
- * Index 0 as author is accepted and the teamcolor will be displayed exactly as in PrintToChat.
  */
-void CPrintToChat_Ex(int client, int author, bool playSound, const char[] format, any ...)
+void CPrintToChat_Ex(int client, int author, bool chatMessage, const char[] format, any ...)
 
 /**
  * Prints a message to all clients in the chat area.
- * The chat sound is disabled. If teamcolor is used, the client's teamcolor will be displayed.
  */
 void CPrintToChatAll(const char[] format, any ...)
 
 /**
  * Prints a message to all clients in the chat area.
- * The chat sound is disabled by default. If teamcolor is used, the author's teamcolor will be displayed.
- * Index 0 as author is accepted and the teamcolor will be displayed exactly as in PrintToChat.
  */
-void CPrintToChatAll_Ex(int author, bool playSound, const char[] format, any ...)
+void CPrintToChatAll_Ex(int author, bool chatMessage, const char[] format, any ...)
 
 /**
  * Prints a message to all clients from a specific team in the chat area.
- * The chat sound is disabled. If teamcolor is used, the client's teamcolor will be displayed.
  */
 void CPrintToChatTeam(int team, const char[] format, any ...)
 
 /**
  * Prints a message to all clients from a specific team in the chat area.
- * The chat sound is disabled by default. If teamcolor is used, the author's teamcolor will be displayed.
- * Index 0 as author is accepted and the teamcolor will be displayed exactly as in PrintToChat.
  */
-void CPrintToChatTeam_Ex(int author, int team, bool playSound, const char[] format, any ...)
+void CPrintToChatTeam_Ex(int author, int team, bool chatMessage, const char[] format, any ...)
 
 /**
  * Replies to a message in a command.
- * The chat sound is disabled. If teamcolor is used, the client's teamcolor will be displayed.
  */
 void CReplyToCommand(int client, const char[] format, any ...)
 
 /**
- * Displays usage of an admin command to users depending on the setting of the sm_show_activity cvar.
- * The chat sound is enabled. If teamcolor is used, the client's teamcolor will be displayed.
+ * Replies to a message in a command.
+ */
+stock void CReplyToCommand_Ex(int client, ReplySource replySource, const char[] format, any ...)
+
+/**
+ * Displays usage of an admin command to users depending on the 
+ * setting of the sm_show_activity cvar.  All users receive a message 
+ * in their chat text, except for the originating client, who receives 
+ * the message both in chat and console.
  */
 void CShowActivity(int client, const char[] tag, const char[] format, any ...)
 
 /**
- * Displays usage of an admin command to users depending on the setting of the sm_show_activity cvar.
- * The chat sound is enabled. If teamcolor is used, the author's teamcolor will be displayed.
- * Index 0 as author is accepted and the teamcolor will be displayed exactly as in PrintToChat.
+ * Displays usage of an admin command to users depending on the 
+ * setting of the sm_show_activity cvar.  All users receive a message 
+ * in their chat text, except for the originating client, who receives 
+ * the message both in chat and console.
  */
 void CShowActivity_Ex(int client, int author, const char[] tag, const char[] format, any ...)
 
@@ -119,6 +117,11 @@ int CFormat(char[] format, int maxlen)
 
 /**
  * Remove color tags from a string.
+ */
+int CRemoveTags(char[] format, int maxlen)
+
+/**
+ * Remove colors from a string.
  */
 int CRemoveColors(char[] format, int maxlen)
 ```
