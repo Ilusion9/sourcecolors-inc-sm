@@ -3,28 +3,6 @@
 #endif
 #define _more_colors_included
 
-ColorInfo g_MultiColors[] = {
-	{ "default",      "\x01" },
-	{ "team",         "\x03" },
-	{ "red",          "\x07FF4040" },
-	{ "blue",         "\x0799CCFF" },
-	{ "green",        "\x073EFF3E" },
-	{ "white",        "\x07FFFFFF" },
-	{ "yellow",       "\x07FFFF00" },
-	{ "purple",       "\x07800080" },
-	{ "orange",       "\x07FFA500" },
-	{ "lime",         "\x0700FF00" },
-	{ "grey",         "\x07CCCCCC" },
-	{ "black",        "\x07000000" }
-};
-
-char g_DodsTeamColors[] = {
-	"\x01",
-	"\x07CCCCCC",
-	"\x074D7942",
-	"\x07FF4040"
-};
-
 stock void MC_SendMessage(int client, const char[] message, int author = -1, bool chatMessage = false)
 {
 	if (author == -1)
@@ -32,143 +10,153 @@ stock void MC_SendMessage(int client, const char[] message, int author = -1, boo
 		author = client;
 	}
 	
-	if (GetUserMessageId("SayText2") == INVALID_MESSAGE_ID)
+	Handle userMsg = StartMessageOne("SayText2", client, USERMSG_RELIABLE | USERMSG_BLOCKHOOKS);
+	if (userMsg)
+	{
+		if (GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available 
+			&& GetUserMessageType() == UM_Protobuf)
+		{
+			PbSetInt(userMsg, "ent_idx", author);
+			PbSetBool(userMsg, "chat", chatMessage);
+			PbSetString(userMsg, "msg_name", message);
+			PbAddString(userMsg, "params", "");
+			PbAddString(userMsg, "params", "");
+			PbAddString(userMsg, "params", "");
+			PbAddString(userMsg, "params", "");
+		}
+		else
+		{
+			BfWriteByte(userMsg, author);
+			BfWriteByte(userMsg, chatMessage);
+			BfWriteString(userMsg, message);
+		}
+		
+		EndMessage();
+	}
+	else
 	{
 		char buffer[MAX_MESSAGE_LENGTH];
 		strcopy(buffer, sizeof(buffer), message);
 
 		if (GetEngineVersion() == Engine_DODS)
 		{
-			char color[64];
 			int authorTeam = IsClientInGame(author) ? GetClientTeam(author) : 0;
-			
-			Format(color, sizeof(color), "\x07%s", g_DodsTeamColors[authorTeam]);
-			ReplaceString(buffer, sizeof(buffer), "\x03", color, false);
+			switch (authorTeam)
+			{
+				case 0:
+				{
+					ReplaceString(buffer, sizeof(buffer), "\x03", "\x01", false);
+				}
+				
+				case 1:
+				{
+					ReplaceString(buffer, sizeof(buffer), "\x03", "\x07CCCCCC", false);
+				}
+				
+				case 2:
+				{
+					ReplaceString(buffer, sizeof(buffer), "\x03", "\x074D7942", false);
+				}
+				
+				case 3:
+				{
+					ReplaceString(buffer, sizeof(buffer), "\x03", "\x07FF4040", false);
+				}
+			}
 		}
 		
 		PrintToChat(client, "%s", buffer);
-		return;
 	}
-	
-	Handle buf = StartMessageOne("SayText2", client, USERMSG_RELIABLE|USERMSG_BLOCKHOOKS);
-	if (GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available && GetUserMessageType() == UM_Protobuf)
-	{
-		PbSetInt(buf, "ent_idx", author);
-		PbSetBool(buf, "chat", chatMessage);
-		PbSetString(buf, "msg_name", message);
-		PbAddString(buf, "params", "");
-		PbAddString(buf, "params", "");
-		PbAddString(buf, "params", "");
-		PbAddString(buf, "params", "");
-	}
-	else
-	{
-		BfWriteByte(buf, author); // Message author
-		BfWriteByte(buf, chatMessage); // Chat message
-		BfWriteString(buf, message); // Message text
-	}
-	
-	EndMessage();
 }
 
 stock int MC_Format(char[] message, int maxlen)
 {
-	int buffer_index = 0;
+	int index = 0;
+	char color[MAX_MESSAGE_LENGTH];
 	char buffer[MAX_MESSAGE_LENGTH];
-
-	for (int i = 0; i < maxlen && message[i] != '\0'; i++)
+	
+	for (int i = 0; message[i] && i < maxlen; i++)
 	{
 		if (message[i] == '{')
 		{
 			if (message[i + 1] == '#')
 			{
-				char color[MAX_MESSAGE_LENGTH];
-				strcopy(color, sizeof(color), message[i + 2]);
-				
-				int pos = FindCharInString(color, '}');
-				if (pos == 6)
+				int pos = FindCharInString(message[i + 2], '}');
+				if (pos != -1)
 				{
-					strcopy(color[pos], sizeof(color) - pos, "\0");
-					
-					Regex exp = new Regex("^([A-F0-9])+$");
-					int matches = exp.Match(color);
-					delete exp;
-					
-					if (matches > 0)
+					if (pos == 6)
 					{
-						buffer_index += Format(buffer[buffer_index], sizeof(buffer) - buffer_index, "\x07%s", color);
-						i += (pos + 2);
+						strcopy(color, pos + 1, message[i + 2]);
+						index += Format(buffer[index], sizeof(buffer) - index, "\x07%s", color);
+						i += pos + 2;
+						continue;
+					}
+					
+					if (pos == 8)
+					{
+						strcopy(color, pos + 1, message[i + 2]);
+						index += Format(buffer[index], sizeof(buffer) - index, "\x08%s", color);
+						i += pos + 2;
 						continue;
 					}
 				}
 			}
 			else if (message[i + 1] == '$')
 			{
-				char color[MAX_MESSAGE_LENGTH];
-				strcopy(color, sizeof(color), message[i + 2]);
-				
-				int pos = FindCharInString(color, '}');
+				int pos = FindCharInString(message[i + 2], '}');
 				if (pos != -1)
 				{
-					strcopy(color[pos], sizeof(color) - pos, "\0");
-					int newIndex = MC_GetColor(buffer[buffer_index], sizeof(buffer) - buffer_index, color);
+					strcopy(color, pos + 1, message[i + 2]);
+					int newIndex = MC_GetColor(buffer[index], sizeof(buffer) - index, color);
 					
 					if (newIndex)
 					{
-						buffer_index += newIndex;
-						i += (pos + 2);
+						index += newIndex;
+						i += pos + 2;
 						continue;
 					}
 				}
 			}
 		}
 		
-		buffer[buffer_index] = message[i];
-		buffer_index++;
+		buffer[index] = message[i];
+		index++;
 	}
 
 	return Format(message, maxlen, buffer);
 }
 
-stock int MC_RemoveColors(char[] message, int maxlen)
+stock int MC_RemoveTags(char[] message, int maxlen)
 {
-	int buffer_index = 0;
+	int index = 0;
+	char color[MAX_MESSAGE_LENGTH];
 	char buffer[MAX_MESSAGE_LENGTH];
 
-	for (int i = 0; i < maxlen && message[i] != '\0'; i++)
+	for (int i = 0; message[i] && i < maxlen; i++)
 	{
 		if (message[i] == '{')
 		{
 			if (message[i + 1] == '#')
 			{
-				char color[MAX_MESSAGE_LENGTH];
-				strcopy(color, sizeof(color), message[i + 2]);
-				
-				int pos = FindCharInString(color, '}');
+				int pos = FindCharInString(message[i + 2], '}');
 				if (pos == 6)
 				{
-					strcopy(color[pos], sizeof(color) - pos, "\0");
-					
-					Regex exp = new Regex("^([A-F0-9])+$");
-					int matches = exp.Match(color);
-					delete exp;
-					
-					if (matches > 0)
-					{
-						i += (pos + 2);
-						continue;
-					}
+					i += pos + 2;
+					continue;
+				}
+				
+				if (pos == 8)
+				{
+					i += pos + 2;
+					continue;
 				}
 			}
 			else if (message[i + 1] == '$')
 			{
-				char color[MAX_MESSAGE_LENGTH];
-				strcopy(color, sizeof(color), message[i + 2]);
-				
-				int pos = FindCharInString(color, '}');
+				int pos = FindCharInString(message[i + 2], '}');
 				if (pos != -1)
 				{
-					strcopy(color[pos], sizeof(color) - pos, "\0");					
+					strcopy(color, pos + 1, message[i + 2]);
 					if (MC_IsValidColor(color))
 					{
 						i += (pos + 2);
@@ -178,21 +166,110 @@ stock int MC_RemoveColors(char[] message, int maxlen)
 			}
 		}
 		
-		buffer[buffer_index] = message[i];
-		buffer_index++;
+		buffer[index] = message[i];
+		index++;
 	}
 
 	return Format(message, maxlen, buffer);
 }
 
+stock int MC_RemoveColors(char[] message, int maxlen)
+{
+	int index = 0;
+	char buffer[MAX_MESSAGE_LENGTH];
+
+	for (int i = 0; message[i] && i < maxlen; i++)
+	{
+		if (message[i] >= 0x01 && message[i] <= 0x10)
+		{
+			continue;
+		}
+		
+		buffer[index] = message[i];
+		index++;
+	}
+
+	return Format(message, maxlen, buffer);
+}
 
 stock int MC_GetColor(char[] colorHex, int colorHexLen, const char[] colorTag)
 {
-	for (int i = 0; i < sizeof(g_MultiColors); i++)
+	if (colorTag[0] == 'b')
 	{
-		if (StrEqual(colorTag, g_MultiColors[i].colorTag, false))
+		if (StrEqual(colorTag, "black", false))
 		{
-			return Format(colorHex, colorHexLen, "%s", g_MultiColors[i].colorHex);
+			return Format(colorHex, colorHexLen, "\x07000000");
+		}
+		else if (StrEqual(colorTag, "blue", false))
+		{
+			return Format(colorHex, colorHexLen, "\x0799CCFF");
+		}
+	}
+	else if (colorTag[0] == 'd')
+	{
+		if (StrEqual(colorTag, "default", false))
+		{
+			return Format(colorHex, colorHexLen, "\x01");
+		}
+	}
+	else if (colorTag[0] == 'g')
+	{
+		if (StrEqual(colorTag, "green", false))
+		{
+			return Format(colorHex, colorHexLen, "\x073EFF3E");
+		}
+		else if (StrEqual(colorTag, "grey", false))
+		{
+			return Format(colorHex, colorHexLen, "\x07CCCCCC");
+		}
+	}
+	else if (colorTag[0] == 'l')
+	{
+		if (StrEqual(colorTag, "lime", false))
+		{
+			return Format(colorHex, colorHexLen, "\x0700FF00");
+		}
+	}
+	else if (colorTag[0] == 'o')
+	{
+		if (StrEqual(colorTag, "orange", false))
+		{
+			return Format(colorHex, colorHexLen, "\x07FFA500");
+		}
+	}
+	else if (colorTag[0] == 'p')
+	{
+		if (StrEqual(colorTag, "purple", false))
+		{
+			return Format(colorHex, colorHexLen, "\x07800080");
+		}
+	}
+	else if (colorTag[0] == 'r')
+	{
+		if (StrEqual(colorTag, "red", false))
+		{
+			return Format(colorHex, colorHexLen, "\x07FF4040");
+		}
+	}
+	else if (colorTag[0] == 't')
+	{
+		if (StrEqual(colorTag, "team", false))
+		{
+			return Format(colorHex, colorHexLen, "\x03");
+		}
+	}
+	else if (colorTag[0] == 'w')
+	{
+		if (StrEqual(colorTag, "white", false))
+		{
+			return Format(colorHex, colorHexLen, "\x07FFFFFF");
+		}
+	}
+	else if (colorTag[0] == 'y')
+	{
+		if (StrEqual(colorTag, "yellow", false))
+		{
+			return Format(colorHex, colorHexLen, "\x07FFFF00");
 		}
 	}
 	
@@ -201,9 +278,74 @@ stock int MC_GetColor(char[] colorHex, int colorHexLen, const char[] colorTag)
 
 stock bool MC_IsValidColor(const char[] colorTag)
 {
-	for (int i = 0; i < sizeof(g_MultiColors); i++)
+	if (colorTag[0] == 'b')
 	{
-		if (StrEqual(colorTag, g_MultiColors[i].colorTag, false))
+		if (StrEqual(colorTag, "black", false)
+			|| StrEqual(colorTag, "blue", false))
+		{
+			return true;
+		}
+	}
+	else if (colorTag[0] == 'd')
+	{
+		if (StrEqual(colorTag, "default", false))
+		{
+			return true;
+		}
+	}
+	else if (colorTag[0] == 'g')
+	{
+		if (StrEqual(colorTag, "green", false)
+			|| StrEqual(colorTag, "grey", false))
+		{
+			return true;
+		}
+	}
+	else if (colorTag[0] == 'l')
+	{
+		if (StrEqual(colorTag, "lime", false))
+		{
+			return true;
+		}
+	}
+	else if (colorTag[0] == 'o')
+	{
+		if (StrEqual(colorTag, "orange", false))
+		{
+			return true;
+		}
+	}
+	else if (colorTag[0] == 'p')
+	{
+		if (StrEqual(colorTag, "purple", false))
+		{
+			return true;
+		}
+	}
+	else if (colorTag[0] == 'r')
+	{
+		if (StrEqual(colorTag, "red", false))
+		{
+			return true;
+		}
+	}
+	else if (colorTag[0] == 't')
+	{
+		if (StrEqual(colorTag, "team", false))
+		{
+			return true;
+		}
+	}
+	else if (colorTag[0] == 'w')
+	{
+		if (StrEqual(colorTag, "white", false))
+		{
+			return true;
+		}
+	}
+	else if (colorTag[0] == 'y')
+	{
+		if (StrEqual(colorTag, "yellow", false))
 		{
 			return true;
 		}
