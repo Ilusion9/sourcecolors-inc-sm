@@ -87,7 +87,17 @@ void CReplyToCommand(int client, const char[] format, any ...)
 /**
  * Replies to a message in a command.
  */
-void CReplyToCommand_Ex(int client, ReplySource replySource, const char[] format, any ...)
+void CReplyToCommand_Ex(int client, int author, bool chatMessage, const char[] format, any ...)
+
+/**
+ * Replies to a message in a command.
+ */
+void CReplyToCommandSource(int client, ReplySource replySource, const char[] format, any ...)
+
+/**
+ * Replies to a message in a command.
+ */
+void CReplyToCommandSource_Ex(int client, int author, bool chatMessage, ReplySource replySource, const char[] format, any ...)
 
 /**
  * Displays usage of an admin command to users depending on the 
