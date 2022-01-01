@@ -3,7 +3,8 @@
 #endif
 #define _sourcecolors_included
 
-#define MAX_MESSAGE_LENGTH               256
+#define MAX_MESSAGE_LENGTH               192
+
 #define kActivityNone                    0
 #define kActivityNonAdmins               1
 #define kActivityNonAdminsNames          2
@@ -249,15 +250,16 @@ stock void CReplyToCommand(int client, const char[] format, any ...)
 		ThrowError("Invalid client index %d", client);
 	}
 	
+	char buffer[MAX_MESSAGE_LENGTH];
+	
 	if (!client)
 	{
 		SetGlobalTransTarget(LANG_SERVER);
-		
-		char buffer[MAX_MESSAGE_LENGTH];
 		VFormat(buffer, sizeof(buffer), format, 3);
-		CRemoveTags(buffer, sizeof(buffer));
 		
+		CRemoveTags(buffer, sizeof(buffer));
 		PrintToServer(buffer);
+		
 		return;
 	}
 	
@@ -266,7 +268,6 @@ stock void CReplyToCommand(int client, const char[] format, any ...)
 		ThrowError("Client %i is not connected", client);
 	}
 	
-	char buffer[MAX_MESSAGE_LENGTH];
 	SetGlobalTransTarget(client);
 	
 	if (GetCmdReplySource() == SM_REPLY_TO_CONSOLE)
@@ -288,19 +289,161 @@ stock void CReplyToCommand(int client, const char[] format, any ...)
  * Replies to a message in a command.
  *
  * @param client            Client index, or 0 for server.
+ * @param author            Author index.
+ * @param chatMessage       Regular chat message?
+ * @param format            Formatting rules.
+ * @param ...               Variable number of format parameters.
+ * @error                   If the client is not connected or invalid.
+ */
+stock void CReplyToCommand_Ex(int client, int author, bool chatMessage, const char[] format, any ...)
+{
+	if (client < 0 || client > MaxClients)
+	{
+		ThrowError("Invalid client index %d", client);
+	}
+	
+	char buffer[MAX_MESSAGE_LENGTH];
+	
+	if (!client)
+	{
+		SetGlobalTransTarget(LANG_SERVER);
+		VFormat(buffer, sizeof(buffer), format, 5);
+		
+		CRemoveTags(buffer, sizeof(buffer));
+		PrintToServer(buffer);
+		
+		return;
+	}
+	
+	if (!IsClientConnected(client))
+	{
+		ThrowError("Client %i is not connected", client);
+	}
+	
+	SetGlobalTransTarget(client);
+	
+	if (GetCmdReplySource() == SM_REPLY_TO_CONSOLE)
+	{
+		VFormat(buffer, sizeof(buffer), format, 5);
+		CRemoveTags(buffer, sizeof(buffer));
+		PrintToConsole(client, buffer);
+	}
+	else
+	{
+		int index = CPreFormat(buffer, sizeof(buffer));
+		VFormat(buffer[index], sizeof(buffer) - index, format, 5);
+		CFormat(buffer[index], sizeof(buffer) - index);
+		CSendMessage(client, buffer, author, chatMessage);
+	}
+}
+
+/**
+ * Replies to a message in a command.
+ *
+ * @param client            Client index, or 0 for server.
  * @param replySource       ReplySource value.
  * @param format            Formatting rules.
  * @param ...               Variable number of format parameters.
  * @error                   If the client is not connected or invalid.
  */
-stock void CReplyToCommand_Ex(int client, ReplySource replySource, const char[] format, any ...)
+stock void CReplyToCommandSource(int client, ReplySource replySource, const char[] format, any ...)
 {
-	char buffer[254];
-	SetGlobalTransTarget(client);
-	VFormat(buffer, sizeof(buffer), format, 4);
+	if (client < 0 || client > MaxClients)
+	{
+		ThrowError("Invalid client index %d", client);
+	}
 	
+	char buffer[MAX_MESSAGE_LENGTH];
+	
+	if (!client)
+	{
+		SetGlobalTransTarget(LANG_SERVER);
+		VFormat(buffer, sizeof(buffer), format, 4);
+		
+		CRemoveTags(buffer, sizeof(buffer));
+		PrintToServer(buffer);
+		
+		return;
+	}
+	
+	if (!IsClientConnected(client))
+	{
+		ThrowError("Client %i is not connected", client);
+	}
+	
+	SetGlobalTransTarget(client);
 	ReplySource currentSource = SetCmdReplySource(replySource);
-	CReplyToCommand(client, buffer);
+	
+	if (replySource == SM_REPLY_TO_CONSOLE)
+	{
+		VFormat(buffer, sizeof(buffer), format, 4);
+		CRemoveTags(buffer, sizeof(buffer));
+		PrintToConsole(client, buffer);
+	}
+	else
+	{
+		int index = CPreFormat(buffer, sizeof(buffer));
+		VFormat(buffer[index], sizeof(buffer) - index, format, 4);
+		CFormat(buffer[index], sizeof(buffer) - index);
+		CSendMessage(client, buffer);
+	}
+	
+	SetCmdReplySource(currentSource);
+}
+
+/**
+ * Replies to a message in a command.
+ *
+ * @param client            Client index, or 0 for server.
+ * @param author            Author index.
+ * @param chatMessage       Regular chat message?
+ * @param replySource       ReplySource value.
+ * @param format            Formatting rules.
+ * @param ...               Variable number of format parameters.
+ * @error                   If the client is not connected or invalid.
+ */
+stock void CReplyToCommandSource_Ex(int client, int author, bool chatMessage, ReplySource replySource, const char[] format, any ...)
+{
+	if (client < 0 || client > MaxClients)
+	{
+		ThrowError("Invalid client index %d", client);
+	}
+	
+	char buffer[MAX_MESSAGE_LENGTH];
+	
+	if (!client)
+	{
+		SetGlobalTransTarget(LANG_SERVER);
+		VFormat(buffer, sizeof(buffer), format, 6);
+		
+		CRemoveTags(buffer, sizeof(buffer));
+		PrintToServer(buffer);
+		
+		return;
+	}
+	
+	if (!IsClientConnected(client))
+	{
+		ThrowError("Client %i is not connected", client);
+	}
+	
+	SetGlobalTransTarget(client);
+	ReplySource currentSource = SetCmdReplySource(replySource);
+	
+	if (replySource == SM_REPLY_TO_CONSOLE)
+	{
+		VFormat(buffer, sizeof(buffer), format, 6);
+		CRemoveTags(buffer, sizeof(buffer));
+		PrintToConsole(client, buffer);
+	}
+	else
+	{
+		int index = CPreFormat(buffer, sizeof(buffer));
+		VFormat(buffer[index], sizeof(buffer) - index, format, 6);
+		CFormat(buffer[index], sizeof(buffer) - index);
+		CSendMessage(client, buffer, author, chatMessage);
+	}
+	
 	SetCmdReplySource(currentSource);
 }
 
