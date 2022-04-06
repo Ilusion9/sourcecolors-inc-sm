@@ -722,7 +722,7 @@ stock void CShowActivity_Ex(int client, int author, const char[] tag, const char
  * @param format            Formatting rules.
  * @param ...               Variable number of format parameters.
  */
-stock void CShowActivityAdmin(char[] clientName, AdminId adminId, const char[] tag, const char[] format, any ...)
+stock void CShowActivityAdmin(const char[] clientName, AdminId adminId, const char[] tag, const char[] format, any ...)
 {
 	char signUser[MAX_MESSAGE_LENGTH];
 	if (adminId != INVALID_ADMIN_ID && GetAdminFlag(adminId, Admin_Generic, Access_Effective))
@@ -802,7 +802,7 @@ stock void CShowActivityAdmin(char[] clientName, AdminId adminId, const char[] t
  * @param ...               Variable number of format parameters.
  * @error                   Invalid author index, author not connected.
  */
-stock void CShowActivityAdmin_Ex(char[] clientName, AdminId adminId, int author, const char[] tag, const char[] format, any ...)
+stock void CShowActivityAdmin_Ex(const char[] clientName, AdminId adminId, int author, const char[] tag, const char[] format, any ...)
 {
 	if (author)
 	{
