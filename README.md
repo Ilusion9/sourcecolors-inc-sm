@@ -4,46 +4,46 @@ Credits to: multicolors, colors, morecolors, colorlib creators.
 
 ## Colors CSS, TF2, DODS, HL2DM
 ```
-{$default}
-{$team}
-{$red}
-{$blue}
-{$green}
-{$white}
-{$yellow}
-{$purple}
-{$orange}
-{$lime}
-{$grey}
-{$black}
+{color:default}
+{color:team}
+{color:red}
+{color:blue}
+{color:green}
+{color:white}
+{color:yellow}
+{color:purple}
+{color:orange}
+{color:lime}
+{color:grey}
+{color:black}
 ```
 
 You can use any HEX color like this
 ```
-{#FFFFFF}
-{#121212}
-{#AB89EA}
+{color:#FFFFFF}
+{color:#121212}
+{color:#AB89EA}
 etc.
 ```
 
 ## Colors for other games
 ```
-{$default}
-{$team}
-{$darkred}
-{$green}
-{$lightgreen}
-{$lime}
-{$red}
-{$grey}
-{$yellow}
-{$orange}
-{$bluegrey}
-{$blue}
-{$darkblue}
-{$grey2}
-{$orchid}
-{$lightred}
+{color:default}
+{color:team}
+{color:darkred}
+{color:green}
+{color:lightgreen}
+{color:lime}
+{color:red}
+{color:grey}
+{color:yellow}
+{color:orange}
+{color:bluegrey}
+{color:blue}
+{color:darkblue}
+{color:grey2}
+{color:orchid}
+{color:lightred}
 ```
 
 # Functions
@@ -101,7 +101,7 @@ void CReplyToCommandSource_Ex(int client, int author, bool chatMessage, ReplySou
 
 /**
  * Displays usage of an admin command to users depending on the 
- * setting of the sm_show_activity cvar.  All users receive a message 
+ * setting of the sm_show_activity cvar. All users receive a message 
  * in their chat text, except for the originating client, who receives 
  * the message both in chat and console.
  */
@@ -109,11 +109,27 @@ void CShowActivity(int client, const char[] tag, const char[] format, any ...)
 
 /**
  * Displays usage of an admin command to users depending on the 
- * setting of the sm_show_activity cvar.  All users receive a message 
+ * setting of the sm_show_activity cvar. All users receive a message 
  * in their chat text, except for the originating client, who receives 
  * the message both in chat and console.
  */
 void CShowActivity_Ex(int client, int author, const char[] tag, const char[] format, any ...)
+
+/**
+ * Displays usage of an admin command to users depending on the 
+ * setting of the sm_show_activity cvar. All users receive a message 
+ * in their chat text, except for the originating client, who receives 
+ * the message both in chat and console.
+ */
+void CShowActivityAdmin(char[] clientName, AdminId adminId, const char[] tag, const char[] format, any ...)
+
+/**
+ * Displays usage of an admin command to users depending on the 
+ * setting of the sm_show_activity cvar. All users receive a message 
+ * in their chat text, except for the originating client, who receives 
+ * the message both in chat and console.
+ */
+void CShowActivityAdmin_Ex(char[] clientName, AdminId adminId, int author, const char[] tag, const char[] format, any ...)
 
 /**
  * Prepares a string to display the message correctly in the chat.
