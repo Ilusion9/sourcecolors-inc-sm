@@ -121,7 +121,7 @@ void CShowActivity_Ex(int client, int author, const char[] tag, const char[] for
  * in their chat text, except for the originating client, who receives 
  * the message both in chat and console.
  */
-void CShowActivityAdmin(char[] clientName, AdminId adminId, const char[] tag, const char[] format, any ...)
+void CShowActivityAdmin(const char[] clientName, AdminId adminId, const char[] tag, const char[] format, any ...)
 
 /**
  * Displays usage of an admin command to users depending on the 
@@ -129,7 +129,7 @@ void CShowActivityAdmin(char[] clientName, AdminId adminId, const char[] tag, co
  * in their chat text, except for the originating client, who receives 
  * the message both in chat and console.
  */
-void CShowActivityAdmin_Ex(char[] clientName, AdminId adminId, int author, const char[] tag, const char[] format, any ...)
+void CShowActivityAdmin_Ex(const char[] clientName, AdminId adminId, int author, const char[] tag, const char[] format, any ...)
 
 /**
  * Prepares a string to display the message correctly in the chat.
