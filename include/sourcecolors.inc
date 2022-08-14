@@ -12,9 +12,6 @@
 #define kActivityAdminsNames           8
 #define kActivityRootNames             16
 
-#include <sourcecolors/morecolors>
-#include <sourcecolors/colors>
-
 /**
  * Prints a message to a specific client in the chat area.
  * 
@@ -42,7 +39,7 @@ stock void CPrintToChat(int client, const char[] format, any ...)
 	
 	CPreFormat(buffer, sizeof(buffer));
 	CFormat(buffer, sizeof(buffer));
-	CSendMessage(client, buffer);
+	SourceColors_SendMessage(client, buffer);
 }
 
 /**
@@ -87,7 +84,7 @@ stock void CPrintToChat_Ex(int client, int author, bool chatMessage, const char[
 	
 	CPreFormat(buffer, sizeof(buffer));
 	CFormat(buffer, sizeof(buffer));
-	CSendMessage(client, buffer, author, chatMessage);
+	SourceColors_SendMessage(client, buffer, author, chatMessage);
 }
 
 /**
@@ -112,7 +109,7 @@ stock void CPrintToChatAll(const char[] format, any ...)
 		
 		CPreFormat(buffer, sizeof(buffer));
 		CFormat(buffer, sizeof(buffer));
-		CSendMessage(i, buffer);
+		SourceColors_SendMessage(i, buffer);
 	}
 }
 
@@ -154,7 +151,7 @@ stock void CPrintToChatAll_Ex(int author, bool chatMessage, const char[] format,
 		
 		CPreFormat(buffer, sizeof(buffer));
 		CFormat(buffer, sizeof(buffer));
-		CSendMessage(i, buffer, author, chatMessage);
+		SourceColors_SendMessage(i, buffer, author, chatMessage);
 	}
 }
 
@@ -181,7 +178,7 @@ stock void CPrintToChatTeam(int team, const char[] format, any ...)
 		
 		CPreFormat(buffer, sizeof(buffer));
 		CFormat(buffer, sizeof(buffer));
-		CSendMessage(i, buffer);
+		SourceColors_SendMessage(i, buffer);
 	}
 }
 
@@ -224,7 +221,7 @@ stock void CPrintToChatTeam_Ex(int team, int author, bool chatMessage, const cha
 		
 		CPreFormat(buffer, sizeof(buffer));
 		CFormat(buffer, sizeof(buffer));
-		CSendMessage(i, buffer, author, chatMessage);
+		SourceColors_SendMessage(i, buffer, author, chatMessage);
 	}
 }
 
@@ -261,10 +258,10 @@ stock void CReplyToCommand(int client, const char[] format, any ...)
 			PrintToConsole(client, buffer);
 		}
 		else
-		{		
+		{
 			CPreFormat(buffer, sizeof(buffer));
 			CFormat(buffer, sizeof(buffer));
-			CSendMessage(client, buffer);
+			SourceColors_SendMessage(client, buffer);
 		}
 	}
 	else
@@ -330,7 +327,7 @@ stock void CReplyToCommand_Ex(int client, int author, bool chatMessage, const ch
 		{
 			CPreFormat(buffer, sizeof(buffer));
 			CFormat(buffer, sizeof(buffer));
-			CSendMessage(client, buffer, author, chatMessage);
+			SourceColors_SendMessage(client, buffer, author, chatMessage);
 		}
 	}
 	else
@@ -382,7 +379,7 @@ stock void CReplyToCommandSource(int client, ReplySource replySource, const char
 		{			
 			CPreFormat(buffer, sizeof(buffer));
 			CFormat(buffer, sizeof(buffer));
-			CSendMessage(client, buffer);
+			SourceColors_SendMessage(client, buffer);
 		}
 	}
 	else
@@ -449,7 +446,7 @@ stock void CReplyToCommandSource_Ex(int client, int author, bool chatMessage, Re
 		{
 			CPreFormat(buffer, sizeof(buffer));
 			CFormat(buffer, sizeof(buffer));
-			CSendMessage(client, buffer, author, chatMessage);
+			SourceColors_SendMessage(client, buffer, author, chatMessage);
 		}
 	}
 	else
@@ -467,8 +464,7 @@ stock void CReplyToCommandSource_Ex(int client, int author, bool chatMessage, Re
 /**
  * Displays usage of an admin command to users depending on the 
  * setting of the sm_show_activity cvar. All users receive a message 
- * in their chat text, except for the originating client, who receives 
- * the message both in chat and console.
+ * in their chat text.
  *
  * @param client        Client's index.
  * @param tag           Tag to prepend to the message.
@@ -478,8 +474,8 @@ stock void CReplyToCommandSource_Ex(int client, int author, bool chatMessage, Re
  */
 stock void CShowActivity(int client, const char[] tag, const char[] format, any ...)
 {
+	char signUser[128];
 	char clientName[MAX_NAME_LENGTH];
-	char signUser[MAX_MESSAGE_LENGTH];
 	
 	if (client)
 	{
@@ -583,8 +579,7 @@ stock void CShowActivity(int client, const char[] tag, const char[] format, any 
 /**
  * Displays usage of an admin command to users depending on the 
  * setting of the sm_show_activity cvar. All users receive a message 
- * in their chat text, except for the originating client, who receives 
- * the message both in chat and console.
+ * in their chat text.
  *
  * @param client        Client's index.
  * @param author        Author's index.
@@ -608,8 +603,8 @@ stock void CShowActivity_Ex(int client, int author, const char[] tag, const char
 		}
 	}
 	
+	char signUser[128];
 	char clientName[MAX_NAME_LENGTH];
-	char signUser[MAX_MESSAGE_LENGTH];
 	
 	if (client)
 	{
@@ -713,16 +708,15 @@ stock void CShowActivity_Ex(int client, int author, const char[] tag, const char
 /**
  * Displays usage of an admin command to users depending on the 
  * setting of the sm_show_activity cvar. All users receive a message 
- * in their chat text, except for the originating client, who receives 
- * the message both in chat and console.
+ * in their chat text.
  *
- * @param clientName        Client's name.
- * @param adminId           Client's admin ID.
- * @param tag               Tag to prepend to the message.
- * @param format            Formatting rules.
- * @param ...               Variable number of format parameters.
+ * @param adminName        Admin's name.
+ * @param adminId          Admin's AdminId.
+ * @param tag              Tag to prepend to the message.
+ * @param format           Formatting rules.
+ * @param ...              Variable number of format parameters.
  */
-stock void CShowActivityAdmin(const char[] clientName, AdminId adminId, const char[] tag, const char[] format, any ...)
+stock void CShowActivityAdmin(const char[] adminName, AdminId adminId, const char[] tag, const char[] format, any ...)
 {
 	char signUser[MAX_MESSAGE_LENGTH];
 	if (adminId != INVALID_ADMIN_ID && GetAdminFlag(adminId, Admin_Generic, Access_Effective))
@@ -759,11 +753,11 @@ stock void CShowActivityAdmin(const char[] clientName, AdminId adminId, const ch
 			{
 				if (cvarActivity.IntValue & kActivityNonAdminsNames)
 				{
-					CPrintToChat_Ex(i, author, true, "%s%s: %s", tag, clientName, buffer);
+					CPrintToChat_Ex(i, 0, true, "%s%s: %s", tag, adminName, buffer);
 				}
 				else
 				{
-					CPrintToChat_Ex(i, author, true, "%s%s: %s", tag, signUser, buffer);
+					CPrintToChat_Ex(i, 0, true, "%s%s: %s", tag, signUser, buffer);
 				}
 			}
 		}
@@ -777,11 +771,11 @@ stock void CShowActivityAdmin(const char[] clientName, AdminId adminId, const ch
 				if ((cvarActivity.IntValue & kActivityAdminsNames) 
 					|| ((cvarActivity.IntValue & kActivityRootNames) && rootAccess))
 				{
-					CPrintToChat_Ex(i, author, true, "%s%s: %s", tag, clientName, buffer);
+					CPrintToChat_Ex(i, 0, true, "%s%s: %s", tag, adminName, buffer);
 				}
 				else
 				{
-					CPrintToChat_Ex(i, author, true, "%s%s: %s", tag, signUser, buffer);
+					CPrintToChat_Ex(i, 0, true, "%s%s: %s", tag, signUser, buffer);
 				}
 			}
 		}
@@ -791,18 +785,17 @@ stock void CShowActivityAdmin(const char[] clientName, AdminId adminId, const ch
 /**
  * Displays usage of an admin command to users depending on the 
  * setting of the sm_show_activity cvar. All users receive a message 
- * in their chat text, except for the originating client, who receives 
- * the message both in chat and console.
+ * in their chat text.
  *
- * @param clientName        Client's name.
- * @param adminId           Client's admin ID.
- * @param author            Author's index.
- * @param tag               Tag to prepend to the message.
- * @param format            Formatting rules.
- * @param ...               Variable number of format parameters.
- * @error                   Invalid author index, author not connected.
+ * @param adminName        Admin's name.
+ * @param adminId          Admin's AdminId.
+ * @param author           Author's index.
+ * @param tag              Tag to prepend to the message.
+ * @param format           Formatting rules.
+ * @param ...              Variable number of format parameters.
+ * @error                  Invalid author index, author not connected.
  */
-stock void CShowActivityAdmin_Ex(const char[] clientName, AdminId adminId, int author, const char[] tag, const char[] format, any ...)
+stock void CShowActivityAdmin_Ex(const char[] adminName, AdminId adminId, int author, const char[] tag, const char[] format, any ...)
 {
 	if (author)
 	{
@@ -852,11 +845,11 @@ stock void CShowActivityAdmin_Ex(const char[] clientName, AdminId adminId, int a
 			{
 				if (cvarActivity.IntValue & kActivityNonAdminsNames)
 				{
-					CPrintToChat(i, "%s%s: %s", tag, clientName, buffer);
+					CPrintToChat_Ex(i, author, true, "%s%s: %s", tag, adminName, buffer);
 				}
 				else
 				{
-					CPrintToChat(i, "%s%s: %s", tag, signUser, buffer);
+					CPrintToChat_Ex(i, author, true, "%s%s: %s", tag, signUser, buffer);
 				}
 			}
 		}
@@ -870,11 +863,11 @@ stock void CShowActivityAdmin_Ex(const char[] clientName, AdminId adminId, int a
 				if ((cvarActivity.IntValue & kActivityAdminsNames) 
 					|| ((cvarActivity.IntValue & kActivityRootNames) && rootAccess))
 				{
-					CPrintToChat(i, "%s%s: %s", tag, clientName, buffer);
+					CPrintToChat_Ex(i, author, true, "%s%s: %s", tag, adminName, buffer);
 				}
 				else
 				{
-					CPrintToChat(i, "%s%s: %s", tag, signUser, buffer);
+					CPrintToChat_Ex(i, author, true, "%s%s: %s", tag, signUser, buffer);
 				}
 			}
 		}
@@ -884,88 +877,356 @@ stock void CShowActivityAdmin_Ex(const char[] clientName, AdminId adminId, int a
 /**
  * Prepares a string to display the message correctly in the chat.
  *
- * @param message        The string.
- * @param maxlen         The maximum length of the string.
- * @return               First free index in the string.
+ * @param buffer        The string.
+ * @param maxlen        The maximum length of the string.
+ * @return              First free index in the string.
  */
-stock int CPreFormat(char[] message, int maxlen)
+stock int CPreFormat(char[] buffer, int maxLen)
 {
 	if (GetEngineVersion() == Engine_CSGO)
 	{
-		return Format(message, maxlen, " \x01%s", message);
+		return Format(buffer, maxLen, " \x01%s", buffer);
 	}
 	
-	return Format(message, maxlen, "\x01%s", message);
+	return Format(buffer, maxLen, "\x01%s", buffer);
 }
 
 /**
- * Replace color tags from a string with actual color values.
+ * Replaces color tags from a string with actual color values.
  *
- * @param message         The string.
- * @param maxlen          The maximum length of the string.
- * @return                Number of cells written.
+ * @param buffer        The string.
+ * @param maxLen        The maximum length of the string.
+ * @return              Number of cells written.
  */
-stock int CFormat(char[] format, int maxlen)
+stock int CFormat(char[] buffer, int maxLen)
 {
-	if (IsSource2009())
+	int index;
+	char newBuffer[MAX_MESSAGE_LENGTH];
+	bool isSource2009 = SourceColors_IsSource2009();
+	
+	for (int i = 0; buffer[i] && i < maxLen; i++)
 	{
-		return MC_Format(format, maxlen);
+		if (buffer[i] == '{' && !strncmp(buffer[i + 1], "color:", 6, false))
+		{
+			int pos;
+			char color[MAX_MESSAGE_LENGTH];
+			
+			for (int j = i + 7; buffer[j] && j < maxLen; j++)
+			{
+				if (buffer[j] == '}')
+				{
+					break;
+				}
+				
+				color[pos++] = buffer[j];
+			}
+			
+			if (pos && i + pos < maxLen)
+			{
+				if (buffer[i + 7] == '#' && isSource2009)
+				{
+					if (i + 8 < maxLen)
+					{
+						if (pos == 7)
+						{
+							index += FormatEx(newBuffer[index], sizeof(newBuffer) - index, "\x07%s", color[1]);
+						}
+						else if (pos == 9)
+						{
+							index += FormatEx(newBuffer[index], sizeof(newBuffer) - index, "\x08%s", color[1]);
+						}
+						
+						i += pos + 7;
+						continue;
+					}
+				}
+				else
+				{					
+					int len = SourceColors_GetColor(newBuffer[index], sizeof(newBuffer) - index, color, isSource2009);
+					if (len)
+					{
+						index += len;
+					}
+					
+					i += pos + 7;
+					continue;
+				}
+			}
+		}
+		
+		newBuffer[index] = buffer[i];
+		index++;
 	}
 	
-	return C_Format(format, maxlen);
+	return strcopy(buffer, maxLen, newBuffer);
 }
 
 /**
- * Remove color tags from a string.
+ * Removes color tags from a string.
  *
- * @param message         The string.
- * @param maxlen          The maximum length of the string.
- * @return                The new size of the string.
+ * @param buffer        The string.
+ * @param maxLen        The maximum length of the string.
+ * @return              The new size of the string.
  */
-stock int CRemoveTags(char[] format, int maxlen)
+stock int CRemoveTags(char[] buffer, int maxLen)
 {
-	if (IsSource2009())
+	int index;
+	char newBuffer[MAX_MESSAGE_LENGTH];
+	bool isSource2009 = SourceColors_IsSource2009();
+	
+	for (int i = 0; buffer[i] && i < maxLen; i++)
 	{
-		return MC_RemoveTags(format, maxlen);
+		if (buffer[i] == '{' && !strncmp(buffer[i + 1], "color:", 6, false))
+		{
+			int pos;
+			char color[MAX_MESSAGE_LENGTH];
+			
+			for (int j = i + 7; buffer[j] && j < maxLen; j++)
+			{
+				if (buffer[j] == '}')
+				{
+					break;
+				}
+				
+				color[pos++] = buffer[j];
+			}
+			
+			if (pos && i + pos < maxLen)
+			{
+				if (buffer[i + 7] == '#' && isSource2009)
+				{
+					if (i + 8 < maxLen)
+					{
+						i += pos + 7;
+						continue;
+					}
+				}
+				else
+				{
+					i += pos + 7;
+					continue;
+				}
+			}
+		}
+		
+		newBuffer[index] = buffer[i];
+		index++;
 	}
 	
-	return C_RemoveTags(format, maxlen);
+	return strcopy(buffer, maxLen, newBuffer);
 }
 
 /**
- * Remove colors from a string.
+ * Removes colors from a string.
  *
- * @param message         The string.
- * @param maxlen          The maximum length of the string.
- * @return                The new size of the string.
+ * @param buffer        The string.
+ * @param maxLen        The maximum length of the string.
+ * @return              The new size of the string.
  */
-stock int CRemoveColors(char[] format, int maxlen)
+stock int CRemoveColors(char[] buffer, int maxLen)
 {
-	if (IsSource2009())
+	int index;
+	char newBuffer[MAX_MESSAGE_LENGTH];
+	
+	for (int i = 0; buffer[i] && i < maxLen; i++)
 	{
-		return MC_RemoveColors(format, maxlen);
+		if (buffer[i] >= 0x01 && buffer[i] <= 0x10)
+		{
+			continue;
+		}
+		
+		newBuffer[index] = buffer[i];
+		index++;
 	}
 	
-	return C_RemoveColors(format, maxlen);
+	return strcopy(buffer, maxLen, newBuffer);
 }
 
-stock void CSendMessage(int client, const char[] message, int author = -1, bool chatMessage = false)
+void SourceColors_SendMessage(int client, const char[] message, int author = -1, bool chatMessage = false)
 {
-	if (IsSource2009())
+	if (author == -1)
 	{
-		MC_SendMessage(client, message, author, chatMessage);
+		author = client;
+	}
+	
+	Handle userMsg = StartMessageOne("SayText2", client, USERMSG_RELIABLE | USERMSG_BLOCKHOOKS);
+	if (userMsg)
+	{
+		if (GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available 
+			&& GetUserMessageType() == UM_Protobuf)
+		{
+			PbSetInt(userMsg, "ent_idx", author);
+			PbSetBool(userMsg, "chat", chatMessage);
+			PbSetString(userMsg, "msg_name", message);
+			PbAddString(userMsg, "params", "");
+			PbAddString(userMsg, "params", "");
+			PbAddString(userMsg, "params", "");
+			PbAddString(userMsg, "params", "");
+		}
+		else
+		{
+			BfWriteByte(userMsg, author);
+			BfWriteByte(userMsg, chatMessage);
+			BfWriteString(userMsg, message);
+		}
+		
+		EndMessage();
 	}
 	else
 	{
-		C_SendMessage(client, message, author, chatMessage);
+		char buffer[MAX_MESSAGE_LENGTH];
+		strcopy(buffer, sizeof(buffer), message);
+
+		if (GetEngineVersion() == Engine_DODS)
+		{
+			int authorTeam = IsClientInGame(author) ? GetClientTeam(author) : 0;
+			switch (authorTeam)
+			{
+				case 0:
+				{
+					ReplaceString(buffer, sizeof(buffer), "\x03", "\x01", false);
+				}
+				
+				case 1:
+				{
+					ReplaceString(buffer, sizeof(buffer), "\x03", "\x07CCCCCC", false);
+				}
+				
+				case 2:
+				{
+					ReplaceString(buffer, sizeof(buffer), "\x03", "\x074D7942", false);
+				}
+				
+				case 3:
+				{
+					ReplaceString(buffer, sizeof(buffer), "\x03", "\x07FF4040", false);
+				}
+			}
+		}
+		
+		PrintToChat(client, "%s", buffer);
 	}
 }
 
-stock bool IsSource2009()
+bool SourceColors_IsSource2009()
 {
 	EngineVersion engineVersion = GetEngineVersion();
 	return (engineVersion == Engine_CSS 
 		|| engineVersion == Engine_HL2DM 
 		|| engineVersion == Engine_DODS 
 		|| engineVersion == Engine_TF2);
+}
+
+int SourceColors_GetColor(char[] colorHex, int maxLen, const char[] colorTag, bool isSource2009)
+{
+	if (isSource2009)
+	{
+		if (colorTag[0] == 'd')
+		{
+			if (StrEqual(colorTag, "default", false))
+			{
+				return strcopy(colorHex, maxLen, "\x01");
+			}
+		}
+		else if (colorTag[0] == 't')
+		{
+			if (StrEqual(colorTag, "team", false))
+			{
+				return strcopy(colorHex, maxLen, "\x03");
+			}
+		}
+	}
+	else
+	{
+		if (colorTag[0] == 'b')
+		{
+			if (StrEqual(colorTag, "blue", false))
+			{
+				return strcopy(colorHex, maxLen, "\x0B");
+			}
+			else if (StrEqual(colorTag, "bluegrey", false))
+			{
+				return strcopy(colorHex, maxLen, "\x0A");
+			}
+		}
+		else if (colorTag[0] == 'd')
+		{
+			if (StrEqual(colorTag, "darkblue", false))
+			{
+				return strcopy(colorHex, maxLen, "\x0C");
+			}
+			else if (StrEqual(colorTag, "darkred", false))
+			{
+				return strcopy(colorHex, maxLen, "\x02");
+			}
+			else if (StrEqual(colorTag, "default", false))
+			{
+				return strcopy(colorHex, maxLen, "\x01");
+			}
+		}
+		else if (colorTag[0] == 'g')
+		{
+			if (StrEqual(colorTag, "green", false))
+			{
+				return strcopy(colorHex, maxLen, "\x04");
+			}
+			else if (StrEqual(colorTag, "grey", false))
+			{
+				return strcopy(colorHex, maxLen, "\x08");
+			}
+			else if (StrEqual(colorTag, "grey2", false))
+			{
+				return strcopy(colorHex, maxLen, "\x0D");
+			}
+		}
+		else if (colorTag[0] == 'l')
+		{
+			if (StrEqual(colorTag, "lightgreen", false))
+			{
+				return strcopy(colorHex, maxLen, "\x05");
+			}
+			else if (StrEqual(colorTag, "lightred", false))
+			{
+				return strcopy(colorHex, maxLen, "\x0F");
+			}
+			else if (StrEqual(colorTag, "lime", false))
+			{
+				return strcopy(colorHex, maxLen, "\x06");
+			}
+		}
+		else if (colorTag[0] == 'o')
+		{
+			if (StrEqual(colorTag, "orange", false))
+			{
+				return strcopy(colorHex, maxLen, "\x10");
+			}
+			else if (StrEqual(colorTag, "orchid", false))
+			{
+				return strcopy(colorHex, maxLen, "\x0E");
+			}
+		}
+		else if (colorTag[0] == 'r')
+		{
+			if (StrEqual(colorTag, "red", false))
+			{
+				return strcopy(colorHex, maxLen, "\x07");
+			}
+		}
+		else if (colorTag[0] == 't')
+		{
+			if (StrEqual(colorTag, "team", false))
+			{
+				return strcopy(colorHex, maxLen, "\x03");
+			}
+		}
+		else if (colorTag[0] == 'y')
+		{
+			if (StrEqual(colorTag, "yellow", false))
+			{
+				return strcopy(colorHex, maxLen, "\x09");
+			}
+		}
+	}
+	
+	return 0;
 }
