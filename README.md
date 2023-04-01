@@ -8,7 +8,7 @@ Adds colors for plugins to use in chat.
 {color:team}
 ```
 
-### Colors CS:S, DOD:S, HL2:DM and TF2
+### Colors for CS:S, DOD:S, HL2:DM and TF2
 ```
 {color:azure}
 {color:black}
