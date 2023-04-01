@@ -131,7 +131,7 @@ void CReplyToCommand(int client, const char[] format, any ...);
 
 /**
  * Displays usage of an admin command to users depending on the setting of the sm_show_activity cvar.
- * All users receive a message in their chat text, except for the originating client, who receives the message both in chat and console.
+ * All users receive a message in their chat text, except for the originating client, who receives it both in chat and console.
  * 
  * @param client        Client's index (0 = server).
  * @param tag           Tag to prepend to the message.
