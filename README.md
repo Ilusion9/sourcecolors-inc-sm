@@ -173,9 +173,9 @@ int CGetColor(const char[] color, char[] buffer, int maxlen);
 # Examples
 ```sourcepawn
 // {color:team} = the team color of the receiver
-CPrintToChatAll("{color:team} %N{color:default}: test message", client);
+CPrintToChatAll("{color:team}%N{color:default}: test message", client);
 
 // {color:team} = the team color of the client
 CSetChatTextParams(client);
-CPrintToChatAll("{color:team} %N{color:default}: test message", client);
+CPrintToChatAll("{color:team}%N{color:default}: test message", client);
 ```
