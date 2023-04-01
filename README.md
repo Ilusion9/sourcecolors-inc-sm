@@ -73,12 +73,6 @@ Or you can use any HEX color like this:
 {color:orange}
 ```
 
-# Defines
-```sourcepawn
-#define SOURCECOLORS_AUTHOR_RECEIVER          -1
-#define SOURCECOLORS_MAX_MESSAGE_LENGTH        256
-```
-
 # Functions
 ```sourcepawn
 /**
