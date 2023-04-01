@@ -1,14 +1,14 @@
 # Description
-Adds colors for plugins to use in chat.
+Provides colors for plugins to use in chat.
 
 # Colors
-### Colors for all games
+## Colors for all games
 ```
 {color:default}
 {color:team}
 ```
 
-### Colors for CS:S, DOD:S, HL2:DM and TF2
+## Colors for CS:S, DOD:S, HL2:DM and TF2
 ```
 {color:azure}
 {color:black}
@@ -41,7 +41,7 @@ Adds colors for plugins to use in chat.
 {color:team_blue} // only for HL2:DM and TF2
 ```
 
-Or you can use any HEX color like this:
+### Hex colors:
 ```
 {color:#FFFFFF}
 {color:#000000}
@@ -49,7 +49,7 @@ Or you can use any HEX color like this:
 {color:#00000015} // transparent color
 ```
 
-### Colors for CS:GO
+## Colors for CS:GO
 ```
 {color:blue}
 {color:bluegrey}
@@ -67,7 +67,7 @@ Or you can use any HEX color like this:
 {color:yellow}
 ```
 
-### Colors for L4D and L4D2
+## Colors for L4D and L4D2
 ```
 {color:olive}
 {color:orange}
@@ -172,10 +172,10 @@ int CGetColor(const char[] color, char[] buffer, int maxlen);
 
 # Examples
 ```sourcepawn
-// {color:team} will be the team color of the receiver
+// {color:team} = the team color of the receiver
 CPrintToChatAll("client is{color:team} %N{color:default} : test message", client);
 
-// {color:team} will be the team color of the client
+// {color:team} = the team color of the client
 CSetChatTextParams(client);
 CPrintToChatAll("client is{color:team} %N{color:default} : test message", client);
 ```
