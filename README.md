@@ -1,47 +1,73 @@
 # Description
-Another multicolors library.
-Credits to: multicolors, colors, morecolors, colorlib creators.
+Adds colors for plugins to use in chat.
 
-## Colors CSS, TF2, DODS, HL2DM
+## Colors for all games
 ```
 {color:default}
 {color:team}
-{color:red}
+```
+
+## Colors CS:S, DOD:S, HL2:DM and TF2
+```
+{color:azure}
+{color:black}
 {color:blue}
+{color:brown}
+{color:coral}
+{color:crimson}
+{color:cyan}
+{color:emerald}
+{color:gold}
 {color:green}
+{color:grey}
+{color:lime}
+{color:magenta}
+{color:orange}
+{color:pink}
+{color:purple}
+{color:red}
+{color:silver}
+{color:teal}
+{color:turquoise}
 {color:white}
 {color:yellow}
-{color:purple}
-{color:orange}
-{color:lime}
-{color:grey}
-{color:black}
+{color:team_spec}
+{color:team_t} // only for CS:S
+{color:team_ct} // only for CS:S
+{color:team_allies} // only for DOD:S
+{color:team_axis} // only for DOD:S
+{color:team_red} // only for HL2:DM and TF2
+{color:team_blue} // only for HL2:DM and TF2
 ```
 
-You can use any HEX color like this
+Or you can use any HEX color like this:
 ```
 {color:#FFFFFF}
-{color:#121212}
-{color:#AB89EA}
-etc.
+{color:#000000}
+{color:#FFFFFF50} // transparent color
+{color:#00000015} // transparent color
 ```
 
-## Colors for other games
+## Colors for CS:GO
 ```
-{color:default}
-{color:team}
+{color:blue}
+{color:bluegrey}
+{color:darkblue}
 {color:darkred}
 {color:green}
+{color:grey}
+{color:grey2}
 {color:lightgreen}
+{color:lightred}
 {color:lime}
 {color:red}
-{color:grey}
-{color:yellow}
 {color:orange}
-{color:bluegrey}
-{color:blue}
-{color:darkblue}
-{color:grey2}
-{color:orchid}
-{color:lightred}
+{color:purple}
+{color:yellow}
+```
+
+## Colors for L4D and L4D2
+```
+{color:olive}
+{color:orange}
 ```
