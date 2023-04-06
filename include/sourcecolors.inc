@@ -20,28 +20,13 @@ int SOURCECOLORS_CHAT_PARAM_MESSAGE_ID;
  */
 stock bool CGetChatTextParams(int& author)
 {
-	if (SOURCECOLORS_CHAT_MESSAGE_ID + 1 > SOURCECOLORS_MAX_CHAT_ID)
+	int paramId = SOURCECOLORS_CHAT_MESSAGE_ID + 1;
+	if (paramId > SOURCECOLORS_MAX_CHAT_ID)
 	{
-		if (SOURCECOLORS_CHAT_PARAM_MESSAGE_ID != 1)
-		{
-			return false;
-		}
-	}
-	else if (SOURCECOLORS_CHAT_MESSAGE_ID + 1 != SOURCECOLORS_CHAT_PARAM_MESSAGE_ID)
-	{
-		return false;
+		paramId = 1;
 	}
 	
-	if (SOURCECOLORS_CHAT_PARAM_AUTHOR_ID == SOURCECOLORS_AUTHOR_RECEIVER)
-	{
-		author = SOURCECOLORS_AUTHOR_RECEIVER;
-	}
-	else
-	{
-		author = SOURCECOLORS_CHAT_PARAM_AUTHOR_ID ? GetClientOfUserId(SOURCECOLORS_CHAT_PARAM_AUTHOR_ID) : 0;
-	}
-	
-	return true;
+	return SourceColors_GetChatTextParams(paramId, author);
 }
 
 /**
@@ -65,11 +50,6 @@ stock void CSetChatTextParams(int author)
 		}
 	}
 	
-	if (SOURCECOLORS_CHAT_MESSAGE_ID + 1 > SOURCECOLORS_MAX_CHAT_ID)
-	{
-		SOURCECOLORS_CHAT_MESSAGE_ID = 0;
-	}
-	
 	if (author && author != SOURCECOLORS_AUTHOR_RECEIVER)
 	{
 		SOURCECOLORS_CHAT_PARAM_AUTHOR_ID = GetClientUserId(author);
@@ -80,6 +60,10 @@ stock void CSetChatTextParams(int author)
 	}
 	
 	SOURCECOLORS_CHAT_PARAM_MESSAGE_ID = SOURCECOLORS_CHAT_MESSAGE_ID + 1;
+	if (SOURCECOLORS_CHAT_PARAM_MESSAGE_ID > SOURCECOLORS_MAX_CHAT_ID)
+	{
+		SOURCECOLORS_CHAT_PARAM_MESSAGE_ID = 1;
+	}
 }
 
 /**
@@ -87,7 +71,7 @@ stock void CSetChatTextParams(int author)
  */
 stock void CResetChatTextParams()
 {
-	SOURCECOLORS_CHAT_PARAM_MESSAGE_ID = SOURCECOLORS_CHAT_MESSAGE_ID;
+	SOURCECOLORS_CHAT_PARAM_MESSAGE_ID = 0;
 }
 
 /**
@@ -100,12 +84,11 @@ stock void CResetChatTextParams()
  */
 stock void CPrintToChat(int client, const char[] format, any ...)
 {
-	if (SOURCECOLORS_CHAT_MESSAGE_ID + 1 > SOURCECOLORS_MAX_CHAT_ID)
-	{
-		SOURCECOLORS_CHAT_MESSAGE_ID = 0;
-	}
-	
 	SOURCECOLORS_CHAT_MESSAGE_ID++;
+	if (SOURCECOLORS_CHAT_MESSAGE_ID > SOURCECOLORS_MAX_CHAT_ID)
+	{
+		SOURCECOLORS_CHAT_MESSAGE_ID = 1;
+	}
 	
 	if (client < 1 || client > MaxClients)
 	{
@@ -120,16 +103,12 @@ stock void CPrintToChat(int client, const char[] format, any ...)
 	int author = SOURCECOLORS_AUTHOR_RECEIVER;
 	char buffer[SOURCECOLORS_MAX_MESSAGE_LENGTH];
 	
-	if (SOURCECOLORS_CHAT_MESSAGE_ID == SOURCECOLORS_CHAT_PARAM_MESSAGE_ID 
-		&& SOURCECOLORS_CHAT_PARAM_AUTHOR_ID != SOURCECOLORS_AUTHOR_RECEIVER)
-	{
-		author = SOURCECOLORS_CHAT_PARAM_AUTHOR_ID ? GetClientOfUserId(SOURCECOLORS_CHAT_PARAM_AUTHOR_ID) : 0;
-	}
+	SourceColors_GetChatTextParams(SOURCECOLORS_CHAT_MESSAGE_ID, author);
 	
 	SetGlobalTransTarget(client);
 	VFormat(buffer, sizeof(buffer), format, 3);
 	
-	SourceColors_PrintToChat(client, author, "%s", buffer);
+	SourceColors_PrintToChat(client, author, " \x01%s", buffer);
 }
 
 /**
@@ -140,21 +119,16 @@ stock void CPrintToChat(int client, const char[] format, any ...)
  */
 stock void CPrintToChatAll(const char[] format, any ...)
 {
-	if (SOURCECOLORS_CHAT_MESSAGE_ID + 1 > SOURCECOLORS_MAX_CHAT_ID)
-	{
-		SOURCECOLORS_CHAT_MESSAGE_ID = 0;
-	}
-	
 	SOURCECOLORS_CHAT_MESSAGE_ID++;
+	if (SOURCECOLORS_CHAT_MESSAGE_ID > SOURCECOLORS_MAX_CHAT_ID)
+	{
+		SOURCECOLORS_CHAT_MESSAGE_ID = 1;
+	}
 	
 	int author = SOURCECOLORS_AUTHOR_RECEIVER;
 	char buffer[SOURCECOLORS_MAX_MESSAGE_LENGTH];
 	
-	if (SOURCECOLORS_CHAT_MESSAGE_ID == SOURCECOLORS_CHAT_PARAM_MESSAGE_ID 
-		&& SOURCECOLORS_CHAT_PARAM_AUTHOR_ID != SOURCECOLORS_AUTHOR_RECEIVER)
-	{
-		author = SOURCECOLORS_CHAT_PARAM_AUTHOR_ID ? GetClientOfUserId(SOURCECOLORS_CHAT_PARAM_AUTHOR_ID) : 0;
-	}
+	SourceColors_GetChatTextParams(SOURCECOLORS_CHAT_MESSAGE_ID, author);
 	
 	for (int i = 1; i <= MaxClients; i++)
 	{
@@ -166,7 +140,7 @@ stock void CPrintToChatAll(const char[] format, any ...)
 		SetGlobalTransTarget(i);
 		VFormat(buffer, sizeof(buffer), format, 2);
 		
-		SourceColors_PrintToChat(i, author, "%s", buffer);
+		SourceColors_PrintToChat(i, author, " \x01%s", buffer);
 	}
 }
 
@@ -180,21 +154,16 @@ stock void CPrintToChatAll(const char[] format, any ...)
  */
 stock void CReplyToCommand(int client, const char[] format, any ...)
 {
-	if (SOURCECOLORS_CHAT_MESSAGE_ID + 1 > SOURCECOLORS_MAX_CHAT_ID)
-	{
-		SOURCECOLORS_CHAT_MESSAGE_ID = 0;
-	}
-	
 	SOURCECOLORS_CHAT_MESSAGE_ID++;
+	if (SOURCECOLORS_CHAT_MESSAGE_ID > SOURCECOLORS_MAX_CHAT_ID)
+	{
+		SOURCECOLORS_CHAT_MESSAGE_ID = 1;
+	}
 	
 	int author = SOURCECOLORS_AUTHOR_RECEIVER;
 	char buffer[SOURCECOLORS_MAX_MESSAGE_LENGTH];
 	
-	if (SOURCECOLORS_CHAT_MESSAGE_ID == SOURCECOLORS_CHAT_PARAM_MESSAGE_ID 
-		&& SOURCECOLORS_CHAT_PARAM_AUTHOR_ID != SOURCECOLORS_AUTHOR_RECEIVER)
-	{
-		author = SOURCECOLORS_CHAT_PARAM_AUTHOR_ID ? GetClientOfUserId(SOURCECOLORS_CHAT_PARAM_AUTHOR_ID) : 0;
-	}
+	SourceColors_GetChatTextParams(SOURCECOLORS_CHAT_MESSAGE_ID, author);
 	
 	if (client)
 	{
@@ -217,7 +186,7 @@ stock void CReplyToCommand(int client, const char[] format, any ...)
 		}
 		else
 		{
-			SourceColors_PrintToChat(client, author, "%s", buffer);
+			SourceColors_PrintToChat(client, author, " \x01%s", buffer);
 		}
 	}
 	else
@@ -241,12 +210,11 @@ stock void CReplyToCommand(int client, const char[] format, any ...)
  */
 stock void CShowActivity(int client, const char[] tag, const char[] format, any ...)
 {
-	if (SOURCECOLORS_CHAT_MESSAGE_ID + 1 > SOURCECOLORS_MAX_CHAT_ID)
-	{
-		SOURCECOLORS_CHAT_MESSAGE_ID = 0;
-	}
-	
 	SOURCECOLORS_CHAT_MESSAGE_ID++;
+	if (SOURCECOLORS_CHAT_MESSAGE_ID > SOURCECOLORS_MAX_CHAT_ID)
+	{
+		SOURCECOLORS_CHAT_MESSAGE_ID = 1;
+	}
 	
 	if (client)
 	{
@@ -266,18 +234,14 @@ stock void CShowActivity(int client, const char[] tag, const char[] format, any 
 	char name[MAX_NAME_LENGTH];
 	char buffer[SOURCECOLORS_MAX_MESSAGE_LENGTH];
 	
-	if (SOURCECOLORS_CHAT_MESSAGE_ID == SOURCECOLORS_CHAT_PARAM_MESSAGE_ID 
-		&& SOURCECOLORS_CHAT_PARAM_AUTHOR_ID != SOURCECOLORS_AUTHOR_RECEIVER)
-	{
-		author = SOURCECOLORS_CHAT_PARAM_AUTHOR_ID ? GetClientOfUserId(SOURCECOLORS_CHAT_PARAM_AUTHOR_ID) : 0;
-	}
+	SourceColors_GetChatTextParams(SOURCECOLORS_CHAT_MESSAGE_ID, author);
 	
 	SetGlobalTransTarget(client);
 	VFormat(buffer, sizeof(buffer), format, 4);
 	
 	if (client)
 	{
-		SourceColors_PrintToChat(client, author, "%s%s", tag, buffer);
+		SourceColors_PrintToChat(client, author, " \x01%s%s", tag, buffer);
 	}
 	
 	SourceColors_PrintToConsole(client, "%s%s", tag, buffer);
@@ -294,7 +258,7 @@ stock void CShowActivity(int client, const char[] tag, const char[] format, any 
 		SetGlobalTransTarget(i);
 		VFormat(buffer, sizeof(buffer), format, 4);
 		
-		SourceColors_PrintToChat(i, author, "%s%s: %s", tag, name, buffer);
+		SourceColors_PrintToChat(i, author, " \x01%s%s: %s", tag, name, buffer);
 	}
 }
 
@@ -408,25 +372,27 @@ stock int CGetColor(const char[] color, char[] buffer, int maxlen)
 	
 	if (canUseHexColors)
 	{
-		map.SetString("azure", "\x07007FFF");
 		map.SetString("black", "\x07000000");
 		map.SetString("blue", "\x070000FF");
-		map.SetString("brown", "\x07964B00");
-		map.SetString("coral", "\x07FF7F50");
+		map.SetString("bronze", "\x07CD7F32");
+		map.SetString("brown", "\x07A52A2A");
 		map.SetString("crimson", "\x07DC143C");
 		map.SetString("cyan", "\x0700FFFF");
 		map.SetString("emerald", "\x0750C878");
 		map.SetString("gold", "\x07FFD700");
+		map.SetString("gray", "\x07808080");
 		map.SetString("green", "\x0700FF00");
 		map.SetString("grey", "\x07808080");
 		map.SetString("lime", "\x07BFFF00");
 		map.SetString("magenta", "\x07FF00FF");
+		map.SetString("olive", "\x07808000");
 		map.SetString("orange", "\x07FFA500");
 		map.SetString("pink", "\x07FFC0CB");
-		map.SetString("purple", "\x07A020F0");
+		map.SetString("purple", "\x07800080");
 		map.SetString("red", "\x07FF0000");
 		map.SetString("silver", "\x07C0C0C0");
 		map.SetString("teal", "\x07008080");
+		map.SetString("tomato", "\x07FF6347");
 		map.SetString("turquoise", "\x0730D5C8");
 		map.SetString("white", "\x07FFFFFF");
 		map.SetString("yellow", "\x07FFFF00");
@@ -457,6 +423,8 @@ stock int CGetColor(const char[] color, char[] buffer, int maxlen)
 		map.SetString("darkblue", "\x0C");
 		map.SetString("darkred", "\x02");
 		map.SetString("green", "\x04");
+		map.SetString("gray", "\x08");
+		map.SetString("gray2", "\x0D");
 		map.SetString("grey", "\x08");
 		map.SetString("grey2", "\x0D");
 		map.SetString("lightgreen", "\x05");
@@ -494,14 +462,7 @@ stock void SourceColors_PrintToChat(int client, int author, const char[] format,
 	CFormat(buffer, sizeof(buffer));
 	
 	EngineVersion engineVersion = GetEngineVersion();
-	if (engineVersion == Engine_CSGO)
-	{
-		Format(buffer, sizeof(buffer), " \x01%s", buffer);
-	}
-	else
-	{
-		Format(buffer, sizeof(buffer), "\x01%s", buffer);
-	}
+	bool canStartWithColor = engineVersion != Engine_CSGO;
 	
 	Handle userMessage = StartMessageOne("SayText2", client, USERMSG_RELIABLE | USERMSG_BLOCKHOOKS);
 	if (userMessage)
@@ -510,7 +471,7 @@ stock void SourceColors_PrintToChat(int client, int author, const char[] format,
 		{
 			PbSetInt(userMessage, "ent_idx", author);
 			PbSetBool(userMessage, "chat", false);
-			PbSetString(userMessage, "msg_name", buffer);
+			PbSetString(userMessage, "msg_name", buffer[view_as<int>(canStartWithColor)]);
 			PbAddString(userMessage, "params", "");
 			PbAddString(userMessage, "params", "");
 			PbAddString(userMessage, "params", "");
@@ -520,7 +481,7 @@ stock void SourceColors_PrintToChat(int client, int author, const char[] format,
 		{
 			BfWriteByte(userMessage, author);
 			BfWriteByte(userMessage, false);
-			BfWriteString(userMessage, buffer);
+			BfWriteString(userMessage, buffer[view_as<int>(canStartWithColor)]);
 		}
 		
 		EndMessage();
@@ -535,7 +496,7 @@ stock void SourceColors_PrintToChat(int client, int author, const char[] format,
 			ReplaceString(buffer, sizeof(buffer), "\x03", colors[team], true);
 		}
 		
-		PrintToChat(client, buffer);
+		PrintToChat(client, buffer[view_as<int>(canStartWithColor)]);
 	}
 }
 
@@ -549,4 +510,30 @@ stock void SourceColors_PrintToConsole(int client, const char[] format, any ...)
 	
 	CRemoveTags(buffer, sizeof(buffer));
 	PrintToConsole(client, buffer);
+}
+
+/**
+ * Private function.
+ */
+stock bool SourceColors_GetChatTextParams(int paramId, int& author)
+{
+	if (paramId != SOURCECOLORS_CHAT_PARAM_MESSAGE_ID)
+	{
+		return false;
+	}
+	
+	if (SOURCECOLORS_CHAT_PARAM_AUTHOR_ID && SOURCECOLORS_CHAT_PARAM_AUTHOR_ID != SOURCECOLORS_AUTHOR_RECEIVER)
+	{
+		author = GetClientOfUserId(SOURCECOLORS_CHAT_PARAM_AUTHOR_ID);
+		if (!author)
+		{
+			author = SOURCECOLORS_AUTHOR_RECEIVER;
+		}
+	}
+	else
+	{
+		author = SOURCECOLORS_CHAT_PARAM_AUTHOR_ID;
+	}
+	
+	return true;
 }
