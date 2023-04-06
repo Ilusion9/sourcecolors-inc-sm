@@ -35,13 +35,13 @@ Provides colors for plugins to use in chat.
 {color:turquoise}
 {color:white}
 {color:yellow}
-{color:team_spec} // only for CS:S, DOD:S, HL2:DM and TF2
-{color:team_t} // only for CS:S
-{color:team_ct} // only for CS:S
-{color:team_allies} // only for DOD:S
-{color:team_axis} // only for DOD:S
-{color:team_red} // only for HL2:DM and TF2
-{color:team_blue} // only for HL2:DM and TF2
+{color:team_spec} // for CS:S, DOD:S, HL2:DM and TF2
+{color:team_t} // for CS:S
+{color:team_ct} // for CS:S
+{color:team_allies} // for DOD:S
+{color:team_axis} // for DOD:S
+{color:team_red} // for HL2:DM and TF2
+{color:team_blue} // for HL2:DM and TF2
 ```
 
 ### Hex colors:
