@@ -8,31 +8,34 @@ Provides colors for plugins to use in chat.
 {color:team}
 ```
 
-## Colors for CS:S, DOD:S, HL2:DM and TF2
+## Colors for CS:S, DOD:S, HL2:DM, TF2 and SDK 2013
 ```
-{color:azure}
 {color:black}
 {color:blue}
+{color:bronze}
 {color:brown}
 {color:coral}
 {color:crimson}
 {color:cyan}
 {color:emerald}
 {color:gold}
+{color:gray}
 {color:green}
 {color:grey}
 {color:lime}
 {color:magenta}
+{color:olive}
 {color:orange}
 {color:pink}
 {color:purple}
 {color:red}
 {color:silver}
 {color:teal}
+{color:tomato}
 {color:turquoise}
 {color:white}
 {color:yellow}
-{color:team_spec}
+{color:team_spec} // only for CS:S, DOD:S, HL2:DM and TF2
 {color:team_t} // only for CS:S
 {color:team_ct} // only for CS:S
 {color:team_allies} // only for DOD:S
@@ -56,6 +59,8 @@ Provides colors for plugins to use in chat.
 {color:darkblue}
 {color:darkred}
 {color:green}
+{color:gray}
+{color:gray2}
 {color:grey}
 {color:grey2}
 {color:lightgreen}
