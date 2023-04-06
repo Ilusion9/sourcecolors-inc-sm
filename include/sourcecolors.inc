@@ -376,6 +376,7 @@ stock int CGetColor(const char[] color, char[] buffer, int maxlen)
 		map.SetString("blue", "\x070000FF");
 		map.SetString("bronze", "\x07CD7F32");
 		map.SetString("brown", "\x07A52A2A");
+		map.SetString("coral", "\x07FF7F50");
 		map.SetString("crimson", "\x07DC143C");
 		map.SetString("cyan", "\x0700FFFF");
 		map.SetString("emerald", "\x0750C878");
