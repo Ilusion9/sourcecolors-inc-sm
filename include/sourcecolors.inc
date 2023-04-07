@@ -334,9 +334,9 @@ stock int CRemoveTags(char[] buffer, int maxlen)
 }
 
 /**
- * Retrieves a color's value from a color's name or hex value.
+ * Retrieves a color's value from a color's tag.
  * 
- * @param color         Color's name or hex value.
+ * @param color         Color's tag.
  * @param buffer        Buffer to store the color's value.
  * @param maxlen        Maximum length of the buffer.
  * @return              The number of characters written.
@@ -352,16 +352,18 @@ stock int CGetColor(const char[] color, char[] buffer, int maxlen)
 		|| engineVersion == Engine_TF2 
 		|| engineVersion == Engine_SDK2013);
 	
-	if (color[0] == '#' && canUseHexColors)
+	if (canUseHexColors)
 	{
-		len = strlen(color[1]);
-		if (len == 6)
+		len = SourceColors_GetHexColor(color, buffer, maxlen);
+		if (len)
 		{
-			return FormatEx(buffer, maxlen, "\x07%s", color[1]);
+			return len;
 		}
-		else if (len == 8)
+		
+		len = SourceColors_GetRGBColor(color, buffer, maxlen);
+		if (len)
 		{
-			return FormatEx(buffer, maxlen, "\x08%s", color[1]);
+			return len;
 		}
 	}
 	
@@ -537,4 +539,107 @@ stock bool SourceColors_GetChatTextParams(int paramId, int& author)
 	}
 	
 	return true;
+}
+
+/**
+ * Private function.
+ */
+stock int SourceColors_GetHexColor(const char[] color, char[] buffer, int maxlen)
+{
+	if (color[0] != '#')
+	{
+		return 0;
+	}
+	
+	int len = strlen(color);
+	if (len != 7 && len != 9)
+	{
+		return 0;
+	}
+	
+	for (int i = 1; i < len; i++)
+	{
+		if (IsCharAlpha(color[i]))
+		{
+			color[i] = CharToUpper(color[i]);
+			if (color[i] < 'A' || color[i] > 'F')
+			{
+				return 0;
+			}
+		}
+		else if (!IsCharNumeric(color[i]))
+		{
+			return 0;
+		}
+	}
+	
+	if (len == 7)
+	{
+		return FormatEx(buffer, maxlen, "\x07%s", color[1]);
+	}
+	else if (len == 9)
+	{
+		return FormatEx(buffer, maxlen, "\x08%s", color[1]);
+	}
+	
+	return 0;
+}
+
+/**
+ * Private function.
+ */
+stock int SourceColors_GetRGBColor(const char[] color, char[] buffer, int maxlen)
+{
+	if (strncmp(color, "rgb", 3, true) 
+		|| color[3] != '(' && strncmp(color[3], "a(", 2, true))
+	{
+		return 0;
+	}
+	
+	int len = strlen(color);
+	if (color[len - 1] != ')')
+	{
+		return 0;
+	}
+	
+	color[len - 1] = 0;
+	
+	int numBuffers = (color[3] == 'a') ? 4 : 3;
+	char buffers[4][SOURCECOLORS_MAX_MESSAGE_LENGTH];
+	
+	if (ExplodeString(color[numBuffers + 1], ",", buffers, numBuffers, sizeof(buffers[])) != numBuffers)
+	{
+		return 0;
+	}
+	
+	int rgb[3];
+	
+	TrimString(buffers[0]);
+	TrimString(buffers[1]);
+	TrimString(buffers[2]);
+	
+	if (!StringToIntEx(buffers[0], rgb[0]) || rgb[0] < 0 || rgb[0] > 255 
+		|| !StringToIntEx(buffers[1], rgb[1]) || rgb[1] < 0 || rgb[1] > 255 
+		|| !StringToIntEx(buffers[2], rgb[2]) || rgb[2] < 0 || rgb[2] > 255)
+	{
+		return 0;
+	}
+	
+	if (numBuffers == 4)
+	{
+		float alpha;
+		TrimString(buffers[3]);
+		
+		if (!StringToFloatEx(buffers[3], alpha) || alpha < 0.0 || alpha > 1.0)
+		{
+			return 0;
+		}
+		
+		if (alpha != 1.0)
+		{
+			return FormatEx(buffer, maxlen, "\x08%02X%02X%02X%02X", rgb[0], rgb[1], rgb[2], RoundToCeil(alpha * 255.0));
+		}
+	}
+	
+	return FormatEx(buffer, maxlen, "\x07%02X%02X%02X", rgb[0], rgb[1], rgb[2]);
 }
