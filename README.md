@@ -52,6 +52,14 @@ Provides colors for plugins to use in chat.
 {color:#00000015} // transparent color
 ```
 
+### RGB colors:
+```
+{color:rgb(255, 255, 255)}
+{color:rgb(0, 0, 0)}
+{color:rgba(255, 255, 255, 0.31)} // transparent color
+{color:rgba(0, 0, 0, 0.08)} // transparent color
+```
+
 ## Colors for CS:GO
 ```
 {color:blue}
@@ -165,9 +173,9 @@ int CFormat(char[] buffer, int maxlen);
 int CRemoveTags(char[] buffer, int maxlen);
 
 /**
- * Retrieves a color's value from a color's name or hex value.
+ * Retrieves a color's value from a color's tag.
  * 
- * @param color         Color's name or hex value.
+ * @param color         Color's tag.
  * @param buffer        Buffer to store the color's value.
  * @param maxlen        Maximum length of the buffer.
  * @return              The number of characters written.
@@ -177,6 +185,9 @@ int CGetColor(const char[] color, char[] buffer, int maxlen);
 
 # Examples
 ```sourcepawn
+char color[256];
+CGetColor("blue", color, sizeof(color));
+
 // {color:team} = the team color of the receiver
 CPrintToChatAll("{color:team}%N :{color:default} test message", client);
 
