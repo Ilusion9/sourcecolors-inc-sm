@@ -10,7 +10,6 @@ Provides colors for plugins to use in chat.
 
 ## Colors for CS:S, DOD:S, HL2:DM, TF2 and SDK 2013
 ```
-{color:aqua}
 {color:black}
 {color:blue}
 {color:bronze}
@@ -19,7 +18,6 @@ Provides colors for plugins to use in chat.
 {color:crimson}
 {color:cyan}
 {color:emerald}
-{color:fuchsia}
 {color:gold}
 {color:gray}
 {color:green}
