@@ -10,6 +10,7 @@ Provides colors for plugins to use in chat.
 
 ## Colors for CS:S, DOD:S, HL2:DM, TF2 and SDK 2013
 ```
+{color:aqua}
 {color:black}
 {color:blue}
 {color:bronze}
@@ -18,12 +19,15 @@ Provides colors for plugins to use in chat.
 {color:crimson}
 {color:cyan}
 {color:emerald}
+{color:fuchsia}
 {color:gold}
 {color:gray}
 {color:green}
 {color:grey}
 {color:lime}
 {color:magenta}
+{color:maroon}
+{color:navy}
 {color:olive}
 {color:orange}
 {color:pink}
@@ -46,18 +50,20 @@ Provides colors for plugins to use in chat.
 
 ### Hex colors:
 ```
-{color:#FFFFFF}
-{color:#000000}
-{color:#FFFFFF50} // transparent color
-{color:#00000015} // transparent color
+{color:#000000} // black
+{color:#FF0000} // red
+{color:#FFFFFF} // white
+{color:#00000015} // black transparent color
+{color:#FFFFFF50} // white transparent color
 ```
 
 ### RGB colors:
 ```
-{color:rgb(255, 255, 255)}
-{color:rgb(0, 0, 0)}
-{color:rgba(255, 255, 255, 0.31)} // transparent color
-{color:rgba(0, 0, 0, 0.08)} // transparent color
+{color:rgb(0, 0, 0)} // black
+{color:rgb(255, 0, 0)} // red
+{color:rgb(255, 255, 255)} // white
+{color:rgba(0, 0, 0, 0.08)} // black transparent color
+{color:rgba(255, 255, 255, 0.31)} // white transparent color
 ```
 
 ## Colors for CS:GO
@@ -173,9 +179,9 @@ int CFormat(char[] buffer, int maxlen);
 int CRemoveTags(char[] buffer, int maxlen);
 
 /**
- * Retrieves a color's value from a color's tag.
+ * Retrieves a color's value from a color's name or HTML code (hex or RGB).
  * 
- * @param color         Color's tag.
+ * @param color         Color's name or HTML code.
  * @param buffer        Buffer to store the color's value.
  * @param maxlen        Maximum length of the buffer.
  * @return              The number of characters written.
@@ -185,9 +191,6 @@ int CGetColor(const char[] color, char[] buffer, int maxlen);
 
 # Examples
 ```sourcepawn
-char color[256];
-CGetColor("blue", color, sizeof(color));
-
 // {color:team} = the team color of the receiver
 CPrintToChatAll("{color:team}%N :{color:default} test message", client);
 
