@@ -354,13 +354,13 @@ stock int CGetColor(const char[] color, char[] buffer, int maxlen)
 	
 	if (canUseHexColors)
 	{
-		len = SourceColors_GetHexColor(color, buffer, maxlen);
+		len = SourceColors_GetColorFromHex(color, buffer, maxlen);
 		if (len)
 		{
 			return len;
 		}
 		
-		len = SourceColors_GetRGBColor(color, buffer, maxlen);
+		len = SourceColors_GetColorFromRGB(color, buffer, maxlen);
 		if (len)
 		{
 			return len;
@@ -548,7 +548,7 @@ stock bool SourceColors_GetChatTextParams(int paramId, int& author)
 /**
  * Private function.
  */
-stock int SourceColors_GetHexColor(const char[] color, char[] buffer, int maxlen)
+stock int SourceColors_GetColorFromHex(const char[] color, char[] buffer, int maxlen)
 {
 	if (color[0] != '#')
 	{
@@ -591,7 +591,7 @@ stock int SourceColors_GetHexColor(const char[] color, char[] buffer, int maxlen
 /**
  * Private function.
  */
-stock int SourceColors_GetRGBColor(const char[] color, char[] buffer, int maxlen)
+stock int SourceColors_GetColorFromRGB(const char[] color, char[] buffer, int maxlen)
 {
 	if (strncmp(color, "rgb", 3, true) 
 		|| color[3] != '(' && strncmp(color[3], "a(", 2, true))
