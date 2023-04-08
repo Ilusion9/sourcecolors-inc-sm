@@ -374,7 +374,6 @@ stock int CGetColor(const char[] color, char[] buffer, int maxlen)
 	
 	if (canUseHexColors)
 	{
-		map.SetString("aqua", "\x0700FFFF");
 		map.SetString("black", "\x07000000");
 		map.SetString("blue", "\x070000FF");
 		map.SetString("bronze", "\x07CD7F32");
@@ -383,7 +382,6 @@ stock int CGetColor(const char[] color, char[] buffer, int maxlen)
 		map.SetString("crimson", "\x07DC143C");
 		map.SetString("cyan", "\x0700FFFF");
 		map.SetString("emerald", "\x0750C878");
-		map.SetString("fuchsia", "\x07FF00FF");
 		map.SetString("gold", "\x07FFD700");
 		map.SetString("gray", "\x07808080");
 		map.SetString("green", "\x0700FF00");
