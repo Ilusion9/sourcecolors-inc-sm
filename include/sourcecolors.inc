@@ -334,9 +334,9 @@ stock int CRemoveTags(char[] buffer, int maxlen)
 }
 
 /**
- * Retrieves a color's value from a color's tag.
+ * Retrieves a color's value from a color's name or HTML code (hex or RGB).
  * 
- * @param color         Color's tag.
+ * @param color         Color's name or HTML code.
  * @param buffer        Buffer to store the color's value.
  * @param maxlen        Maximum length of the buffer.
  * @return              The number of characters written.
@@ -374,6 +374,7 @@ stock int CGetColor(const char[] color, char[] buffer, int maxlen)
 	
 	if (canUseHexColors)
 	{
+		map.SetString("aqua", "\x0700FFFF");
 		map.SetString("black", "\x07000000");
 		map.SetString("blue", "\x070000FF");
 		map.SetString("bronze", "\x07CD7F32");
@@ -382,12 +383,15 @@ stock int CGetColor(const char[] color, char[] buffer, int maxlen)
 		map.SetString("crimson", "\x07DC143C");
 		map.SetString("cyan", "\x0700FFFF");
 		map.SetString("emerald", "\x0750C878");
+		map.SetString("fuchsia", "\x07FF00FF");
 		map.SetString("gold", "\x07FFD700");
 		map.SetString("gray", "\x07808080");
 		map.SetString("green", "\x0700FF00");
 		map.SetString("grey", "\x07808080");
 		map.SetString("lime", "\x07BFFF00");
 		map.SetString("magenta", "\x07FF00FF");
+		map.SetString("maroon", "\x07800000");
+		map.SetString("navy", "\x07000080");
 		map.SetString("olive", "\x07808000");
 		map.SetString("orange", "\x07FFA500");
 		map.SetString("pink", "\x07FFC0CB");
@@ -561,8 +565,7 @@ stock int SourceColors_GetHexColor(const char[] color, char[] buffer, int maxlen
 	{
 		if (IsCharAlpha(color[i]))
 		{
-			color[i] = CharToUpper(color[i]);
-			if (color[i] < 'A' || color[i] > 'F')
+			if ((color[i] < 'A' || color[i] > 'F') && (color[i] < 'a' || color[i] > 'f'))
 			{
 				return 0;
 			}
