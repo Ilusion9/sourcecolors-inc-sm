@@ -265,29 +265,29 @@ stock void CShowActivity(int client, const char[] tag, const char[] format, any 
 /**
  * Formats a string by replacing color tags with color values.
  * 
- * @param buffer        Destination string buffer.
- * @param maxlen        Maximum length of the string buffer.
- * @return              The number of characters written.
+ * @param buffer           Destination string buffer.
+ * @param maxlength        Maximum length of the string buffer.
+ * @return                 The number of characters written.
  */
-stock int CFormat(char[] buffer, int maxlen)
+stock int CFormat(char[] buffer, int maxlength)
 {
 	int j;
 	int len;
 	
-	char[] newBuffer = new char[maxlen];
+	char color[SOURCECOLORS_MAX_MESSAGE_LENGTH];
+	char newBuffer[SOURCECOLORS_MAX_MESSAGE_LENGTH];
 	
-	for (int i = 0; buffer[i] && j < maxlen; i++)
+	for (int i = 0; buffer[i] && j < maxlength; i++)
 	{
 		if (!strncmp(buffer[i], "{color:", 7, true) 
 			&& (len = FindCharInString(buffer[i + 7], '}')) != -1)
 		{
-			char[] color = new char[len + 1];
 			strcopy(color, len + 1, buffer[i + 7]);
-			
 			TrimString(color);
+			
 			i += len + 7;
 			
-			if ((len = CGetColor(color, newBuffer[j], maxlen - j - 1)))
+			if ((len = CGetColor(color, newBuffer[j], sizeof(newBuffer) - j - 1)))
 			{
 				j += len;
 			}
@@ -299,24 +299,24 @@ stock int CFormat(char[] buffer, int maxlen)
 		}
 	}
 	
-	return strcopy(buffer, maxlen, newBuffer);
+	return strcopy(buffer, maxlength, newBuffer);
 }
 
 /**
  * Removes color tags from a string.
  * 
- * @param buffer        Destination string buffer.
- * @param maxlen        Maximum length of the string buffer.
- * @return              The number of characters written.
+ * @param buffer           Destination string buffer.
+ * @param maxlength        Maximum length of the string buffer.
+ * @return                 The number of characters written.
  */
-stock int CRemoveTags(char[] buffer, int maxlen)
+stock int CRemoveTags(char[] buffer, int maxlength)
 {
 	int j;
 	int len;
 	
-	char[] newBuffer = new char[maxlen];
+	char newBuffer[SOURCECOLORS_MAX_MESSAGE_LENGTH];
 	
-	for (int i = 0; buffer[i] && j < maxlen; i++)
+	for (int i = 0; buffer[i] && j < maxlength; i++)
 	{
 		if (!strncmp(buffer[i], "{color:", 7, true) 
 			&& (len = FindCharInString(buffer[i + 7], '}')) != -1)
@@ -330,18 +330,18 @@ stock int CRemoveTags(char[] buffer, int maxlen)
 		}
 	}
 	
-	return strcopy(buffer, maxlen, newBuffer);
+	return strcopy(buffer, maxlength, newBuffer);
 }
 
 /**
  * Retrieves a color's value from a color's name or HTML code (hex or RGB).
  * 
- * @param color         Color's name or HTML code.
- * @param buffer        Buffer to store the color's value.
- * @param maxlen        Maximum length of the buffer.
- * @return              The number of characters written.
+ * @param color            Color's name or HTML code.
+ * @param buffer           Buffer to store the color's value.
+ * @param maxlength        Maximum length of the buffer.
+ * @return                 The number of characters written.
  */
-stock int CGetColor(const char[] color, char[] buffer, int maxlen)
+stock int CGetColor(const char[] color, char[] buffer, int maxlength)
 {
 	int len;
 	EngineVersion engineVersion = GetEngineVersion();
@@ -354,13 +354,13 @@ stock int CGetColor(const char[] color, char[] buffer, int maxlen)
 	
 	if (canUseHexColors)
 	{
-		len = SourceColors_GetColorFromHex(color, buffer, maxlen);
+		len = SourceColors_GetColorFromHex(color, buffer, maxlength);
 		if (len)
 		{
 			return len;
 		}
 		
-		len = SourceColors_GetColorFromRGB(color, buffer, maxlen);
+		len = SourceColors_GetColorFromRGB(color, buffer, maxlength);
 		if (len)
 		{
 			return len;
@@ -446,7 +446,7 @@ stock int CGetColor(const char[] color, char[] buffer, int maxlen)
 		map.SetString("orange", "\x04");
 	}
 	
-	map.GetString(color, buffer, maxlen, len);
+	map.GetString(color, buffer, maxlength, len);
 	delete map;
 	
 	return len;
@@ -546,7 +546,7 @@ stock bool SourceColors_GetChatTextParams(int paramId, int& author)
 /**
  * Private function.
  */
-stock int SourceColors_GetColorFromHex(const char[] color, char[] buffer, int maxlen)
+stock int SourceColors_GetColorFromHex(const char[] color, char[] buffer, int maxlength)
 {
 	if (color[0] != '#')
 	{
@@ -576,11 +576,11 @@ stock int SourceColors_GetColorFromHex(const char[] color, char[] buffer, int ma
 	
 	if (len == 7)
 	{
-		return FormatEx(buffer, maxlen, "\x07%s", color[1]);
+		return FormatEx(buffer, maxlength, "\x07%s", color[1]);
 	}
 	else if (len == 9)
 	{
-		return FormatEx(buffer, maxlen, "\x08%s", color[1]);
+		return FormatEx(buffer, maxlength, "\x08%s", color[1]);
 	}
 	
 	return 0;
@@ -589,7 +589,7 @@ stock int SourceColors_GetColorFromHex(const char[] color, char[] buffer, int ma
 /**
  * Private function.
  */
-stock int SourceColors_GetColorFromRGB(const char[] color, char[] buffer, int maxlen)
+stock int SourceColors_GetColorFromRGB(const char[] color, char[] buffer, int maxlength)
 {
 	if (strncmp(color, "rgb", 3, true) 
 		|| color[3] != '(' && strncmp(color[3], "a(", 2, true))
@@ -638,9 +638,9 @@ stock int SourceColors_GetColorFromRGB(const char[] color, char[] buffer, int ma
 		
 		if (alpha != 1.0)
 		{
-			return FormatEx(buffer, maxlen, "\x08%02X%02X%02X%02X", rgb[0], rgb[1], rgb[2], RoundToCeil(alpha * 255.0));
+			return FormatEx(buffer, maxlength, "\x08%02X%02X%02X%02X", rgb[0], rgb[1], rgb[2], RoundToCeil(alpha * 255.0));
 		}
 	}
 	
-	return FormatEx(buffer, maxlen, "\x07%02X%02X%02X", rgb[0], rgb[1], rgb[2]);
+	return FormatEx(buffer, maxlength, "\x07%02X%02X%02X", rgb[0], rgb[1], rgb[2]);
 }
