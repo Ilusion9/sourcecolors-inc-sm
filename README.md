@@ -161,30 +161,30 @@ void CShowActivity(int client, const char[] tag, const char[] format, any ...);
 /**
  * Formats a string by replacing color tags with color values.
  * 
- * @param buffer        Destination string buffer.
- * @param maxlen        Maximum length of the string buffer.
- * @return              The number of characters written.
+ * @param buffer           Destination string buffer.
+ * @param maxlength        Maximum length of the string buffer.
+ * @return                 The number of characters written.
  */
-int CFormat(char[] buffer, int maxlen);
+int CFormat(char[] buffer, int maxlength);
 
 /**
  * Removes color tags from a string.
  * 
- * @param buffer        Destination string buffer.
- * @param maxlen        Maximum length of the string buffer.
- * @return              The number of characters written.
+ * @param buffer           Destination string buffer.
+ * @param maxlength        Maximum length of the string buffer.
+ * @return                 The number of characters written.
  */
-int CRemoveTags(char[] buffer, int maxlen);
+int CRemoveTags(char[] buffer, int maxlength);
 
 /**
  * Retrieves a color's value from a color's name or HTML code (hex or RGB).
  * 
- * @param color         Color's name or HTML code.
- * @param buffer        Buffer to store the color's value.
- * @param maxlen        Maximum length of the buffer.
- * @return              The number of characters written.
+ * @param color            Color's name or HTML code.
+ * @param buffer           Buffer to store the color's value.
+ * @param maxlength        Maximum length of the buffer.
+ * @return                 The number of characters written.
  */
-int CGetColor(const char[] color, char[] buffer, int maxlen);
+int CGetColor(const char[] color, char[] buffer, int maxlength);
 ```
 
 # Examples
