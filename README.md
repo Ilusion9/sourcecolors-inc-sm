@@ -177,9 +177,9 @@ int CFormat(char[] buffer, int maxlength);
 int CRemoveTags(char[] buffer, int maxlength);
 
 /**
- * Retrieves a color's value from a color's name or its HTML code (HEX, RGB or RGBA).
+ * Retrieves a color's value from a color's tag value.
  * 
- * @param color            Color's name or its HTML code.
+ * @param color            Color's tag value.
  * @param buffer           Buffer to store the color's value.
  * @param maxlength        Maximum length of the buffer.
  * @return                 The number of characters written.
@@ -188,6 +188,13 @@ int CGetColor(const char[] color, char[] buffer, int maxlength);
 ```
 
 # Examples
+```sourcepawn
+char color[64];
+CGetColor("red", color, sizeof(color));
+CGetColor("#FFFFFF", color, sizeof(color));
+CGetColor("rgb(255, 255, 255)", color, sizeof(color));
+CGetColor("rgba(255, 255, 255, 0.5)", color, sizeof(color));
+```
 ```sourcepawn
 // {color:team} = the team color of the receiver
 CPrintToChatAll("{color:team}%N :{color:default} test message", client);
