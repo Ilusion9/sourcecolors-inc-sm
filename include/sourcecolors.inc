@@ -334,9 +334,9 @@ stock int CRemoveTags(char[] buffer, int maxlength)
 }
 
 /**
- * Retrieves a color's value from a color's name or its HTML code (HEX, RGB or RGBA).
+ * Retrieves a color's value from a color's tag value.
  * 
- * @param color            Color's name or its HTML code.
+ * @param color            Color's tag value.
  * @param buffer           Buffer to store the color's value.
  * @param maxlength        Maximum length of the buffer.
  * @return                 The number of characters written.
